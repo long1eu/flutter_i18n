@@ -4,7 +4,7 @@ This plugin helps you internationalize you Flutter app by generating be needed b
 
 # Usage
 
-###1. Setup you App
+### 1. Setup you App
 
  Setup your localizationsDelegates and your supportedLocales witch will allow to access the strings.
 
@@ -46,8 +46,8 @@ If you want to change the last step and to provided a default locale instead of 
   }
 }</pre>
 
-![Arb File icon](/extras/arb_icon.png "Arb File icon") 
-###2.  Setup the arb files.
+<img src="/extras/arb_icon.png" width="150">
+### 2.  Setup the arb files. 
 
 ARB files extension stands for [Application Resource Bundle](https://github.com/googlei18n/app-resource-bundle) and is used by the Dart [intl](https://pub.dartlang.org/packages/intl) package, it is supported by the [Google Translators Toolkit](https://translate.google.com/toolkit) and it's supported by Google.
 
@@ -59,7 +59,7 @@ Do not add white spaces or illegal characters in your IDs. They should match thi
 
 To add a new arb file right click on <b>values</b> folder and select <b>New</b> -><b> Arb </b><b>File</b>. Then pick your language from the list, and region if necessary.
 
-####1. Referencing the values
+#### 1. Referencing the values
 
 The ARB table's keys, called resource IDs, are valid Dart variable names. They correspond to methods from the S class. For example:
 
@@ -71,7 +71,7 @@ The ARB table's keys, called resource IDs, are valid Dart variable names. They c
   );
 }</pre>
 
-####2. Parametrized strings
+#### 2. Parametrized strings
 
 Some strings may contain <em>$variable</em> tokens witch are replaced with your value. For example:
 
@@ -83,7 +83,7 @@ The value for this resource ID is retrieved with a parametrized method instead o
 
     S.of(context).aboutListTileTitle(yourAppTitle)
 
-####3. Plurals
+#### 3. Plurals
 
 Plural translations can be provided for several quantities: 0, 1, 2, "few", "many", "other". The variations are identified by a resource ID suffix which must be one of "Zero", "One", "Two", "Few", "Many", "Other". The "Other" variation is used when none of the other quantities apply. All plural resources must include a resource with the "Other" suffix. For example the English translations ('material_en.arb') for selectedRowCountTitle in the [Material Library Localizations](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations/lib/src/l10n) are:
 
