@@ -54,6 +54,5 @@ class Initializer : StartupActivity {
 
     companion object {
         private val log = Log()
-
     }
 }

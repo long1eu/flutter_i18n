@@ -17,7 +17,6 @@ package org.jetbrains.android.uipreview
 
 import com.android.ide.common.resources.LocaleManager
 import com.android.ide.common.resources.configuration.FlagManager
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.Ref
 import com.intellij.ui.SortedListModel
 import com.intellij.ui.components.JBCheckBox
@@ -58,25 +57,15 @@ class DeviceConfiguratorPanel : JPanel(BorderLayout()) {
         private val myLanguageList = JBList<Any>()
         private val myRegionList = JBList<Any>()
         private var myShowAllRegions: JBCheckBox? = null
-        private var myWarningsLabel: JBLabel? = null
 
-        // pad 20 pixels on the left hand side to space out the two views
-        // Special language comparator: We want to prefer 2-letter language codes.
-        // We can't enable filter lists on the region mode, since fast search doesn't seem to
-        // work on models that can change after creation.
-        // If selecting languages, attempt to pick relevant regions, if applicable
         val component: JComponent
             get() {
                 var gridBagConstraints = GridBagConstraints()
                 val pane = JPanel(GridBagLayout())
-                pane.border = JBUI.Borders.empty(0, 0, 0, 0)
+                pane.border = JBUI.Borders.empty(0, 20, 0, 0)
 
                 myShowAllRegions = JBCheckBox("Show All Regions", false)
-                myWarningsLabel = JBLabel("BCP 47 tags (3-letter languages or regions) will only match on API 21")
-                myWarningsLabel!!.icon = AllIcons.General.BalloonWarning
-                myWarningsLabel!!.isVisible = false
                 val languageLabel = JBLabel("Language:")
-                val languageTip = JBLabel("Tip: Type in list to filter")
                 val regionLabel = JBLabel("Specific Region Only:")
 
                 val languageModel = SortedListModel<Any>(Comparator<Any> { s1, s2 ->
@@ -94,7 +83,6 @@ class DeviceConfiguratorPanel : JPanel(BorderLayout()) {
                 val scroll = JBScrollPane(myLanguageList)
                 val languagePane = ListWithFilter.wrap(myLanguageList, scroll, FlagManager.languageNameMapper)
                 languageLabel.labelFor = myLanguageList
-                languageTip.font = JBUI.Fonts.miniFont()
 
                 myRegionList.selectionMode = ListSelectionModel.SINGLE_SELECTION
                 myRegionList.cellRenderer = FlagManager.get().regionCodeCellRenderer
@@ -123,7 +111,6 @@ class DeviceConfiguratorPanel : JPanel(BorderLayout()) {
                 pane.add(regionPane, gridBagConstraints)
                 gridBagConstraints = GridBagConstraints()
                 gridBagConstraints.anchor = GridBagConstraints.EAST
-                pane.add(languageTip, gridBagConstraints)
                 gridBagConstraints = GridBagConstraints()
                 gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER
                 gridBagConstraints.anchor = GridBagConstraints.LINE_START
@@ -132,7 +119,6 @@ class DeviceConfiguratorPanel : JPanel(BorderLayout()) {
                 gridBagConstraints = GridBagConstraints()
                 gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER
                 gridBagConstraints.anchor = GridBagConstraints.LINE_START
-                pane.add(myWarningsLabel!!, gridBagConstraints)
 
                 myLanguageList.addListSelectionListener({ updateRegionList(myLanguageList.selectedValue as String) })
                 myShowAllRegions!!.addChangeListener { updateRegionList(myLanguageList.selectedValue as String) }
@@ -190,8 +176,6 @@ class DeviceConfiguratorPanel : JPanel(BorderLayout()) {
             val selectedLanguage = myLanguageList.selectedValue as String
             var selectedRegion: String? = myRegionList.selectedValue as String?
             if (FAKE_VALUE == selectedRegion) selectedRegion = null
-
-            myWarningsLabel!!.isVisible = selectedLanguage.length > 2 || selectedRegion != null && selectedRegion.length > 2
 
             if (selectedRegion == null) selectedRegion = ""
             log.w(selectedLanguage, selectedRegion)
