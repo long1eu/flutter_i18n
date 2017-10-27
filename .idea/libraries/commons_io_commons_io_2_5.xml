@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="commons-io:commons-io:2.5" type="repository">
+    <properties maven-id="commons-io:commons-io:2.5" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.5/commons-io-2.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

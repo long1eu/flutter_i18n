@@ -1,0 +1,45 @@
+<idea-plugin>
+    <id>FlutterI18n</id>
+    <name>Flutter i18n</name>
+    <version>0.0.1</version>
+    <vendor email="home@long1.eu">long1eu</vendor>
+    <depends>com.intellij.modules.json</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Dart</depends>
+    <depends>io.flutter</depends>
+
+    <description>This plugin create a binding between your translations from .arb files and your Flutter app.
+    </description>
+
+    <change-notes><![CDATA[
+      <p><strong><span style="font-size: 18px;">0.0.1</span></strong></p>
+        <ul>
+	        <li>first release</li>
+        </ul>
+    ]]>
+    </change-notes>
+
+    <idea-version since-build="145.0"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="eu.long1.flutter.i18n.Initializer"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+
+        <action id="FlutterI18n.NewArbFile"
+                class="eu.long1.flutter.i18n.actions.NewArbFileAction"
+                text="Arb File"
+                description="Creates a Arb file for a new language"
+                icon="FlutterI18nIcons.ArbFile">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="Dart.NewDartFile"/>
+        </action>
+    </actions>
+
+    <project-components>
+
+    </project-components>
+
+</idea-plugin>
