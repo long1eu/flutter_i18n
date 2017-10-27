@@ -134,7 +134,7 @@ object I18nFile {
         //if the value for an ids is empty, remove it?
         //val ids = ids.filter { !mapLang[it].isNullOrBlank() }
 
-        fileBuilder.append("class $lang extends S {\n  $lang(Locale locale) : super(locale);\n")
+        fileBuilder.append("class $lang extends S {\n  $lang(Locale locale) : super(locale);\n\n")
 
         ids.forEach {
             getStrings(it, mapLang, fileBuilder)
@@ -148,7 +148,7 @@ object I18nFile {
             getPlurals(it, pluralsMaps, mapLang, fileBuilder)
         }
 
-        fileBuilder.append("}\n\n\n")
+        fileBuilder.append("}\n\n")
 
         return fileBuilder
     }
@@ -289,9 +289,12 @@ object I18nFile {
             "        return locale;\n" +
             "      else if (supported.contains(languageLocale))\n" +
             "        return languageLocale;\n" +
-            "      else\n" +
-            "        return fallback ?? supported.first;\n" +
-            "    };\n" +
+            "      else {\n" +
+            "        var fallbackLocale = fallback ?? supported.first;\n" +
+            "        assert(supported.contains(fallbackLocale));\n" +
+            "        return fallbackLocale;\n" +
+            "      }\n" +
+            "    };\n"+
             "  }\n" +
             "\n" +
             "  Future<S> load(Locale locale) {\n" +

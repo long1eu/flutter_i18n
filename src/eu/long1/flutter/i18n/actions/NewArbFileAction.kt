@@ -3,12 +3,16 @@ package eu.long1.flutter.i18n.actions
 import FlutterI18nIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import eu.long1.flutter.i18n.I18nFile
 import eu.long1.flutter.i18n.Log
 import org.jetbrains.android.uipreview.DeviceConfiguratorPanel
 import javax.swing.JComponent
@@ -54,6 +58,12 @@ class NewArbFileAction : AnAction() {
 
                 document.setText("{}")
                 PsiDocumentManager.getInstance(project).commitDocument(document)
+                document.addDocumentListener(object : DocumentListener {
+                    override fun documentChanged(event: DocumentEvent?) {
+                        ApplicationManager.getApplication().invokeLater(
+                                Runnable { I18nFile.generate(project, valuesFolder) }, project.disposed)
+                    }
+                })
             }
         } else {
             editor.openFile(newVF!!, true)
