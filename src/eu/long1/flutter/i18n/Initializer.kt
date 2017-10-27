@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import eu.long1.flutter.i18n.arb.ArbFileType
+import io.flutter.utils.FlutterModuleUtils
 import java.util.*
 
 class Initializer : StartupActivity {
@@ -23,6 +24,11 @@ class Initializer : StartupActivity {
     private lateinit var valuesFolder: VirtualFile
 
     override fun runActivity(project: Project) {
+        if (!FlutterModuleUtils.hasFlutterModule(project)) {
+            log.i("This is not a Flutter project.")
+            return
+        }
+
         psiManager = PsiManager.getInstance(project)
         documentManager = PsiDocumentManager.getInstance(project)
         baseDir = project.baseDir
@@ -38,7 +44,8 @@ class Initializer : StartupActivity {
                 documentManager.getDocument(psiManager.findFile(it)!!)!!.addDocumentListener(object : DocumentListener {
                     override fun documentChanged(event: DocumentEvent?) {
                         log.w(Date().time)
-                        ApplicationManager.getApplication().invokeLater(Runnable { I18nFile.generate(project, valuesFolder) }, project.disposed)
+                        ApplicationManager.getApplication().invokeLater(
+                                Runnable { I18nFile.generate(project, valuesFolder) }, project.disposed)
                     }
                 })
             }
