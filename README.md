@@ -47,6 +47,7 @@ If you want to change the last step and to provided a default locale instead of 
 }</pre>
 
 <img src="/extras/arb_icon.png" width="150">
+
 ### 2.  Setup the arb files. 
 
 ARB files extension stands for [Application Resource Bundle](https://github.com/googlei18n/app-resource-bundle) and is used by the Dart [intl](https://pub.dartlang.org/packages/intl) package, it is supported by the [Google Translators Toolkit](https://translate.google.com/toolkit) and it's supported by Google.
