@@ -29,14 +29,18 @@
 
     <actions>
         <!-- Add your actions here -->
-
         <action id="FlutterI18n.NewArbFile"
                 class="eu.long1.flutter.i18n.actions.NewArbFileAction"
                 text="Arb File"
-                description="Creates a Arb file for a new language"
-                icon="FlutterI18nIcons.ArbFile">
+                description="Creates a Arb file for a new language">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="Dart.NewDartFile"/>
         </action>
+
+        <action id="FlutterI18n.RebuildI18nClass" class="eu.long1.flutter.i18n.actions.RebuildI18nFile"
+                text="Rebuild string resources" description="This will rebuild the Localization class.">
+            <add-to-group group-id="Flutter.MainToolbarActions" anchor="last"/>
+        </action>
+
     </actions>
 
     <project-components>

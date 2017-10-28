@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
-import eu.long1.flutter.i18n.I18nFile
+import eu.long1.flutter.i18n.workers.I18nFile
 import eu.long1.flutter.i18n.Log
 import org.jetbrains.android.uipreview.DeviceConfiguratorPanel
 import javax.swing.JComponent

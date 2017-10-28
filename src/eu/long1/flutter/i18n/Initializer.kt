@@ -1,18 +1,14 @@
 package eu.long1.flutter.i18n
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
-import eu.long1.flutter.i18n.arb.ArbFileType
+import eu.long1.flutter.i18n.workers.ArbDocumentListener
+import eu.long1.flutter.i18n.workers.I18nFile
 import io.flutter.utils.FlutterModuleUtils
-import java.util.*
 
 class Initializer : StartupActivity {
 
@@ -32,22 +28,18 @@ class Initializer : StartupActivity {
         psiManager = PsiManager.getInstance(project)
         documentManager = PsiDocumentManager.getInstance(project)
         baseDir = project.baseDir
+        ArbDocumentListener.init(project)
+
 
         runWriteAction {
-            FileTypeManager.getInstance().associateExtension(ArbFileType, ArbFileType.defaultExtension)
             resFolder = baseDir.findChild("res") ?: baseDir.createChildDirectory(this, "res")
             valuesFolder = resFolder.findChild("values") ?: resFolder.createChildDirectory(this, "values")
 
             I18nFile.generate(project, valuesFolder)
 
             valuesFolder.children.forEach {
-                documentManager.getDocument(psiManager.findFile(it)!!)!!.addDocumentListener(object : DocumentListener {
-                    override fun documentChanged(event: DocumentEvent?) {
-                        log.w(Date().time)
-                        ApplicationManager.getApplication().invokeLater(
-                                Runnable { I18nFile.generate(project, valuesFolder) }, project.disposed)
-                    }
-                })
+                val document = documentManager.getDocument(psiManager.findFile(it)!!)
+                document!!.addDocumentListener(ArbDocumentListener)
             }
         }
     }
