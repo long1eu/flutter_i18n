@@ -1,7 +1,7 @@
 package eu.long1.flutter.i18n.arb
 
-import com.intellij.json.JsonFileType
 import FlutterI18nIcons
+import com.intellij.json.JsonFileType
 import javax.swing.Icon
 
 object ArbFileType : JsonFileType() {

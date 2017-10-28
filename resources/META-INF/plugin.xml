@@ -24,6 +24,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="eu.long1.flutter.i18n.Initializer"/>
+        <fileTypeFactory implementation="eu.long1.flutter.i18n.arb.ArbFileTypeFactory"/>
     </extensions>
 
     <actions>
