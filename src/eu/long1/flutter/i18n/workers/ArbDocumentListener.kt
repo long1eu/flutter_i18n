@@ -13,6 +13,8 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.DartClass
 import com.jetbrains.lang.dart.psi.DartFile
+import java.util.concurrent.Semaphore
+import java.util.concurrent.TimeUnit
 
 object ArbDocumentListener : DocumentListener {
 
@@ -21,6 +23,8 @@ object ArbDocumentListener : DocumentListener {
     private lateinit var documentManager: PsiDocumentManager
     private lateinit var resFolder: VirtualFile
     private lateinit var valuesFolder: VirtualFile
+
+    private val semaphore = Semaphore(1)
 
     fun init(project: Project) {
         this.project = project
@@ -84,9 +88,12 @@ object ArbDocumentListener : DocumentListener {
         val end = originalDartClass.nextSibling.startOffsetInParent
 
         runWriteAction {
+            semaphore.tryAcquire(100, TimeUnit.SECONDS)
             dartDocument.setReadOnly(false)
             dartDocument.replaceString(start, end, classSB.toString())
             dartDocument.setReadOnly(true)
+            documentManager.commitDocument(dartDocument)
+            semaphore.release()
         }
     }
 

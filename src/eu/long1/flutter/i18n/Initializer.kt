@@ -30,7 +30,6 @@ class Initializer : StartupActivity {
         baseDir = project.baseDir
         ArbDocumentListener.init(project)
 
-
         runWriteAction {
             resFolder = baseDir.findChild("res") ?: baseDir.createChildDirectory(this, "res")
             valuesFolder = resFolder.findChild("values") ?: resFolder.createChildDirectory(this, "values")
