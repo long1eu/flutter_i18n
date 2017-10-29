@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>FlutterI18n</id>
     <name>Flutter i18n</name>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <vendor email="home@long1.eu">long1eu</vendor>
     <depends>com.intellij.modules.json</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -13,10 +13,16 @@
     </description>
 
     <change-notes><![CDATA[
-      <p><strong><span style="font-size: 18px;">0.0.1</span></strong></p>
-        <ul>
-	        <li>first release</li>
-        </ul>
+    <p><strong><span style="font-size: 18px;">0.0.2</span></strong></p>
+    <ul>
+	<li>update only the class that changes</li>
+	<li>add rebuild action</li>
+    </ul>
+
+    <p><strong><span style="font-size: 18px;">0.0.1</span></strong></p>
+    <ul>
+	<li>first release</li>
+    </ul>
     ]]>
     </change-notes>
 
@@ -36,15 +42,13 @@
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="Dart.NewDartFile"/>
         </action>
 
-        <action id="FlutterI18n.RebuildI18nClass" class="eu.long1.flutter.i18n.actions.RebuildI18nFile"
-                text="Rebuild string resources" description="This will rebuild the Localization class.">
-            <add-to-group group-id="Flutter.MainToolbarActions" anchor="last"/>
-        </action>
-
     </actions>
 
     <project-components>
 
+        <component>
+            <implementation-class>eu.long1.flutter.i18n.Register</implementation-class>
+        </component>
     </project-components>
 
 </idea-plugin>

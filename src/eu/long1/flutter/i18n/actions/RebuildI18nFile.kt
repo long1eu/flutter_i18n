@@ -14,7 +14,6 @@ class RebuildI18nFile : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.icon = FlutterI18nIcons.ArbFile
+        e.presentation.icon = FlutterI18nIcons.ArbRefreshAction
     }
-
 }
