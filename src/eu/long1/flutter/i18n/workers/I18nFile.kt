@@ -320,7 +320,7 @@ object I18nFile {
             "    }\n" +
             "  }\n" +
             "\n" +
-            "  bool isSupported(Locale locale) => supportedLocales.contains(getLang(locale));\n" +
+            "  bool isSupported(Locale locale) => supportedLocales.contains(locale);\n" +
             "\n" +
             "  bool shouldReload(GeneratedLocalizationsDelegate old) => false;\n" +
             "}\n" +
