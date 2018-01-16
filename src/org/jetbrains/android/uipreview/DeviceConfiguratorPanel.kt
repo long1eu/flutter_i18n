@@ -62,7 +62,7 @@ class DeviceConfiguratorPanel : JPanel(BorderLayout()) {
             get() {
                 var gridBagConstraints = GridBagConstraints()
                 val pane = JPanel(GridBagLayout())
-                pane.border = JBUI.Borders.empty(0, 20, 0, 0)
+                pane.border = JBUI.Borders.empty(0, 20, 0, 0)!!
 
                 myShowAllRegions = JBCheckBox("Show All Regions", false)
                 val languageLabel = JBLabel("Language:")

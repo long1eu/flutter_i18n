@@ -119,9 +119,11 @@ object I18nFile {
         val parametrized = ids.filter { mapLang[it]!!.contains("$") }
         ids -= parametrized
 
+
         //if the value for an ids is empty, remove it?
         //val ids = ids.filter { !mapLang[it].isNullOrBlank() }
-        fileBuilder.append("class $lang extends S {\n  $lang(Locale locale) : super(locale);\n\n")
+        fileBuilder.append("class $lang extends S {\n  $lang(Locale locale) : super(locale);\n\n   " +
+                "@override\n  TextDirection get textDirection => TextDirection.${if (rtl.contains(lang.split("_")[0])) "rtl" else "ltr"};\n\n")
 
         ids.forEach {
             getStrings(it, mapLang, fileBuilder)
@@ -136,6 +138,12 @@ object I18nFile {
         }
 
         fileBuilder.append("}\n\n")
+
+        //for hebrew iw=he
+        if(lang.startsWith("iw")){
+            fileBuilder.append("class he_IL extends $lang {\n  he_IL(Locale locale) : super(locale);\n\n   " +
+                    "@override\n  TextDirection get textDirection => TextDirection.rtl;\n\n}")
+        }
     }
 
     private fun generateDelegateClass(map: HashMap<String, HashMap<String, String>>,
@@ -147,11 +155,21 @@ object I18nFile {
             val country = if (langParts.size == 2) langParts[1] else ""
 
             fileBuilder.append("      new Locale(\"$lang\", \"$country\"),\n")
+
+            //for hebrew iw=he
+            if (it.startsWith("iw")) {
+                fileBuilder.append("      new Locale(\"he\", \"IL\"),\n")
+            }
         }
 
         fileBuilder.append(delegateClassResolution)
         map.keys.forEach {
-            fileBuilder.append("      case \"$it\":\n        return new SynchronousFuture<S>(new $it(locale));\n")
+            fileBuilder.append("      case \"$it\":\n        return new SynchronousFuture<WidgetsLocalizations>(new $it(locale));\n")
+
+            //for hebrew iw=he
+            if (it.startsWith("iw")) {
+                fileBuilder.append("      case \"he_IL\":\n        return new SynchronousFuture<WidgetsLocalizations>(new he_IL(locale));\n")
+            }
         }
 
         fileBuilder.append(delegateClassEnd)
@@ -194,7 +212,8 @@ object I18nFile {
 
 
         val parameterName = if (other) {
-            PARAMETER_MATCHER.reset(mapLang["${id}Other"]!!).find();PARAMETER_MATCHER.group().substring(1)
+            PARAMETER_MATCHER.reset(mapLang["${id}Other"]!!).find()
+            PARAMETER_MATCHER.group().substring(1)
         } else "quantity"
 
         if (isOverride) fileBuilder.append("  @override\n")
@@ -268,25 +287,29 @@ object I18nFile {
                     "import 'package:flutter/foundation.dart';\n" +
                     "import 'package:flutter/material.dart';\n\n"
 
-    private const val sClassHeader = "class S {\n" +
+    private const val sClassHeader = "class S extends WidgetsLocalizations {\n" +
             "  Locale _locale;\n" +
             "  String _lang;\n" +
             "\n" +
             "  S(this._locale) {\n" +
             "    _lang = getLang(_locale);\n" +
-            "    print(_lang);\n" +
+            "    print('Current locale: \$_lang');\n" +
             "  }\n" +
             "\n" +
             "  static final GeneratedLocalizationsDelegate delegate =\n" +
             "      new GeneratedLocalizationsDelegate();\n" +
             "\n" +
             "  static S of(BuildContext context) {\n" +
-            "    var s = Localizations.of<S>(context, S);\n" +
+            "    var s = Localizations.of<S>(context, WidgetsLocalizations);\n" +
             "    s._lang = getLang(s._locale);\n" +
             "    return s;\n" +
-            "  }\n\n"
+            "  }\n" +
+            "\n" +
+            "  @override\n" +
+            "  TextDirection get textDirection => TextDirection.ltr;" +
+            "\n\n"
 
-    private const val delegateClassHeader = "class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {\n" +
+    private const val delegateClassHeader = "class GeneratedLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {\n" +
             "  const GeneratedLocalizationsDelegate();\n" +
             "\n" +
             "  List<Locale> get supportedLocales {\n" +
@@ -311,12 +334,12 @@ object I18nFile {
             "    };\n" +
             "  }\n" +
             "\n" +
-            "  Future<S> load(Locale locale) {\n" +
+            "  Future<WidgetsLocalizations> load(Locale locale) {\n" +
             "    String lang = getLang(locale);\n" +
             "    switch (lang) {\n"
 
     private const val delegateClassEnd = "      default:\n" +
-            "        return new SynchronousFuture<S>(new S(locale));\n" +
+            "        return new SynchronousFuture<WidgetsLocalizations>(new S(locale));\n" +
             "    }\n" +
             "  }\n" +
             "\n" +
@@ -327,4 +350,7 @@ object I18nFile {
             "\n" +
             "String getLang(Locale l) =>\n" +
             "    l.countryCode.isEmpty ? l.languageCode : l.toString();\n"
+
+
+    private val rtl: Set<String> = setOf("ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi")
 }
