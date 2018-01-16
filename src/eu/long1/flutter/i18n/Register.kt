@@ -18,13 +18,16 @@ class Register(private val project: Project) : ProjectComponent {
     }
 
     override fun projectOpened() {
+        FlutterModuleUtils.getModules(project)
+
         if (!FlutterModuleUtils.hasFlutterModule(project)) return
         val am = ActionManager.getInstance()
         val action = RebuildI18nFile()
         am.registerAction("FlutterI18n.RebuildI18nFile", action)
-        val windowM = am.getAction("Flutter.MainToolbarActions") as DefaultActionGroup
+        val windowM = am.getAction("ToolbarRunGroup") as DefaultActionGroup
         windowM.addSeparator()
         windowM.add(action)
+        windowM.addSeparator()
     }
 
     override fun projectClosed() {

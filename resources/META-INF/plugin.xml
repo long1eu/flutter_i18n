@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>FlutterI18n</id>
     <name>Flutter i18n</name>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <vendor email="home@long1.eu">long1eu</vendor>
     <depends>com.intellij.modules.json</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -13,6 +13,13 @@
     </description>
 
     <change-notes><![CDATA[
+    <p><strong><span style="font-size: 18px;">0.0.3</span></strong></p>
+    <ul>
+    <li>fixed crash on Flutter</li>
+	<li>add Hebrew fallback support, iw=he</li>
+	<li>added text direction support</li>
+    </ul>
+
     <p><strong><span style="font-size: 18px;">0.0.2</span></strong></p>
     <ul>
 	<li>update only the class that changes</li>
@@ -41,7 +48,6 @@
                 description="Creates a Arb file for a new language">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="Dart.NewDartFile"/>
         </action>
-
     </actions>
 
     <project-components>
