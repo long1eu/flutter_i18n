@@ -38,6 +38,10 @@
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="eu.long1.flutter.i18n.Initializer"/>
         <fileTypeFactory implementation="eu.long1.flutter.i18n.arb.ArbFileTypeFactory"/>
+        <intentionAction >
+            <className>eu.long1.flutter.i18n.actions.ExtractStringResource</className>
+            <category>String Resources</category>
+        </intentionAction>
     </extensions>
 
     <actions>
@@ -51,7 +55,6 @@
     </actions>
 
     <project-components>
-
         <component>
             <implementation-class>eu.long1.flutter.i18n.Register</implementation-class>
         </component>

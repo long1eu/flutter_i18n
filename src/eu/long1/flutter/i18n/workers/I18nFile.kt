@@ -328,7 +328,6 @@ object I18nFile {
             "        return languageLocale;\n" +
             "      else {\n" +
             "        var fallbackLocale = fallback ?? supported.first;\n" +
-            "        assert(supported.contains(fallbackLocale));\n" +
             "        return fallbackLocale;\n" +
             "      }\n" +
             "    };\n" +
@@ -348,8 +347,9 @@ object I18nFile {
             "  bool shouldReload(GeneratedLocalizationsDelegate old) => false;\n" +
             "}\n" +
             "\n" +
-            "String getLang(Locale l) =>\n" +
-            "    l.countryCode.isEmpty ? l.languageCode : l.toString();\n"
+            "String getLang(Locale l) => l.countryCode != null && l.countryCode.isEmpty\n" +
+            "    ? l.languageCode\n" +
+            "    : l.toString();"
 
 
     private val rtl: Set<String> = setOf("ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi")

@@ -42,39 +42,39 @@ class NewArbFileAction : AnAction() {
         }
     }
 
-    private fun createFile(suffix: String, project: Project) {
-        val baseDir = project.baseDir
-        val resFolder = baseDir.findChild("res") ?: baseDir.createChildDirectory(this, "res")
-        val valuesFolder = resFolder.findChild("values") ?: resFolder.createChildDirectory(this, "values")
-        val fileName = "strings_$suffix.arb"
-        var newVF = valuesFolder.findChild(fileName)
-
-        val editor = FileEditorManager.getInstance(project)
-        if (newVF == null) {
-            runWriteAction {
-                newVF = valuesFolder.findOrCreateChildData(this, fileName)
-                val document = PsiDocumentManager.getInstance(project).getDocument(
-                        PsiManager.getInstance(project).findFile(newVF!!)!!)!!
-
-                document.setText("{}")
-                PsiDocumentManager.getInstance(project).commitDocument(document)
-                document.addDocumentListener(object : DocumentListener {
-                    override fun documentChanged(event: DocumentEvent?) {
-                        ApplicationManager.getApplication().invokeLater(
-                                Runnable { I18nFile.generate(project, valuesFolder) }, project.disposed)
-                    }
-                })
-            }
-        } else {
-            editor.openFile(newVF!!, true)
-        }
-    }
-
     override fun update(e: AnActionEvent) {
         e.presentation.icon = FlutterI18nIcons.ArbFile
     }
 
     companion object {
         private val log = Log()
+
+        fun createFile(suffix: String, project: Project) {
+            val baseDir = project.baseDir
+            val resFolder = baseDir.findChild("res") ?: baseDir.createChildDirectory(this, "res")
+            val valuesFolder = resFolder.findChild("values") ?: resFolder.createChildDirectory(this, "values")
+            val fileName = "strings_$suffix.arb"
+            var newVF = valuesFolder.findChild(fileName)
+
+            val editor = FileEditorManager.getInstance(project)
+            if (newVF == null) {
+                runWriteAction {
+                    newVF = valuesFolder.findOrCreateChildData(this, fileName)
+                    val document = PsiDocumentManager.getInstance(project).getDocument(
+                            PsiManager.getInstance(project).findFile(newVF!!)!!)!!
+
+                    document.setText("{}")
+                    PsiDocumentManager.getInstance(project).commitDocument(document)
+                    document.addDocumentListener(object : DocumentListener {
+                        override fun documentChanged(event: DocumentEvent?) {
+                            ApplicationManager.getApplication().invokeLater(
+                                    Runnable { I18nFile.generate(project, valuesFolder) }, project.disposed)
+                        }
+                    })
+                }
+            } else {
+                editor.openFile(newVF!!, true)
+            }
+        }
     }
 }
