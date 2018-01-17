@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -14,6 +15,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import eu.long1.flutter.i18n.workers.I18nFile
 import eu.long1.flutter.i18n.Log
+import io.flutter.utils.FlutterModuleUtils
 import org.jetbrains.android.uipreview.DeviceConfiguratorPanel
 import javax.swing.JComponent
 
@@ -43,6 +45,11 @@ class NewArbFileAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
+        if (!FlutterModuleUtils.usesFlutter(e.project!!)) {
+            e.presentation.isEnabled = false
+            return
+        }
+
         e.presentation.icon = FlutterI18nIcons.ArbFile
     }
 
@@ -63,7 +70,10 @@ class NewArbFileAction : AnAction() {
                     val document = PsiDocumentManager.getInstance(project).getDocument(
                             PsiManager.getInstance(project).findFile(newVF!!)!!)!!
 
-                    document.setText("{}")
+                    CommandProcessor.getInstance().executeCommand(project, {
+                        document.setText("{}")
+                    }, "Create new string file", "Create new string file")
+
                     PsiDocumentManager.getInstance(project).commitDocument(document)
                     document.addDocumentListener(object : DocumentListener {
                         override fun documentChanged(event: DocumentEvent?) {

@@ -5,6 +5,7 @@ import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -70,12 +71,15 @@ object I18nFile {
                     val file = getI18nFile(project)
                     val psiFile = psiManager.findFile(file)!!
                     val document = documentManager.getDocument(psiFile)!!
-                    document.setReadOnly(false)
-                    document.setText(i18nFile)
-                    document.setReadOnly(true)
-                    documentManager.commitDocument(document)
-                    log.i("i18n.dart is up to date")
-                    log.w(Date().time)
+
+                    CommandProcessor.getInstance().executeCommand(project, {
+                        document.setReadOnly(false)
+                        document.setText(i18nFile)
+                        document.setReadOnly(true)
+                        documentManager.commitDocument(document)
+                        log.i("i18n.dart is up to date")
+                        log.w(Date().time)
+                    }, "Generate i18n.dart file", "Generate i18n.dart file")
                 }
             }
         }
@@ -140,7 +144,7 @@ object I18nFile {
         fileBuilder.append("}\n\n")
 
         //for hebrew iw=he
-        if(lang.startsWith("iw")){
+        if (lang.startsWith("iw")) {
             fileBuilder.append("class he_IL extends $lang {\n  he_IL(Locale locale) : super(locale);\n\n   " +
                     "@override\n  TextDirection get textDirection => TextDirection.rtl;\n\n}")
         }

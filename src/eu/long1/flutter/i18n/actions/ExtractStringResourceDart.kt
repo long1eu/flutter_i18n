@@ -5,6 +5,7 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
@@ -36,7 +37,7 @@ class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityA
         return isFlutter && methodDeclaration != null && (dartExpression != null || resId != null)
     }
 
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor!!.document)!!.virtualFile
         val module = ModuleUtilCore.findModuleForFile(file, project)!!
@@ -71,7 +72,11 @@ class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityA
                         dartExpression.textOffset + fileText.length,
                         "S.of(context).${panel.resId}")
 
-                runWriteAction { editor.document.setText(newText) }
+                runWriteAction {
+                    CommandProcessor.getInstance().executeCommand(project, {
+                        editor.document.setText(newText)
+                    }, "Extract string resources", "Extract string resources")
+                }
             }
 
             panel.selected.forEach {
@@ -84,8 +89,10 @@ class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityA
                     if (jsonProperties.isNotEmpty()) buffer.append(",")
                     buffer.append("  \"${panel.resId}\": \"${panel.resValue}\"").append("}")
                     runWriteAction {
-                        PsiDocumentManager.getInstance(project).getDocument(langFile)!!.setText(buffer.toString())
-                        CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
+                        CommandProcessor.getInstance().executeCommand(project, {
+                            PsiDocumentManager.getInstance(project).getDocument(langFile)!!.setText(buffer.toString())
+                            CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
+                        }, "Extract string resources", "Extract string resources")
                     }
                 }
             }

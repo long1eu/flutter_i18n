@@ -5,6 +5,7 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
@@ -59,8 +60,10 @@ class ExtractStringResourceArb : PsiElementBaseIntentionAction(), HighPriorityAc
                     if (jsonProperties.isNotEmpty()) buffer.append(",")
                     buffer.append("  \"${panel.resId}\": \"${panel.resValue}\"").append("}")
                     runWriteAction {
-                        documentManager.getDocument(langFile)!!.setText(buffer.toString())
-                        CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
+                        CommandProcessor.getInstance().executeCommand(project, {
+                            documentManager.getDocument(langFile)!!.setText(buffer.toString())
+                            CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
+                        }, "Override string in other languages", "Override string in other languages")
                     }
                 }
             }
