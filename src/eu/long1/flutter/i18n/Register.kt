@@ -22,6 +22,10 @@ class Register(private val project: Project) : ProjectComponent {
 
         if (!FlutterModuleUtils.hasFlutterModule(project)) return
         val am = ActionManager.getInstance()
+
+        val a = am.getAction("FlutterI18n.RebuildI18nFile")
+        if (a != null) return
+
         val action = RebuildI18nFile()
         am.registerAction("FlutterI18n.RebuildI18nFile", action)
         val windowM = am.getAction("ToolbarRunGroup") as DefaultActionGroup
@@ -31,6 +35,8 @@ class Register(private val project: Project) : ProjectComponent {
     }
 
     override fun projectClosed() {
-
+        val am = ActionManager.getInstance()
+        val a = am.getAction("FlutterI18n.RebuildI18nFile")
+        a.templatePresentation.isEnabled = false
     }
 }
