@@ -20,7 +20,7 @@ import io.flutter.utils.FlutterModuleUtils
 import org.jetbrains.android.uipreview.CreateArbResourcePanel
 import org.jetbrains.android.uipreview.DialogWrapper
 
-class ExtractStringResource : PsiElementBaseIntentionAction(), HighPriorityAction {
+class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityAction {
 
     override fun getText(): String = "Extract the string resource"
 

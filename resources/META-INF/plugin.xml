@@ -38,8 +38,12 @@
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="eu.long1.flutter.i18n.Initializer"/>
         <fileTypeFactory implementation="eu.long1.flutter.i18n.arb.ArbFileTypeFactory"/>
+        <intentionAction>
+            <className>eu.long1.flutter.i18n.actions.ExtractStringResourceDart</className>
+            <category>String Resources</category>
+        </intentionAction>
         <intentionAction >
-            <className>eu.long1.flutter.i18n.actions.ExtractStringResource</className>
+            <className>eu.long1.flutter.i18n.actions.ExtractStringResourceArb</className>
             <category>String Resources</category>
         </intentionAction>
     </extensions>
