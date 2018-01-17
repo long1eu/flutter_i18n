@@ -4,6 +4,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
@@ -44,26 +45,28 @@ class ExtractStringResourceArb : PsiElementBaseIntentionAction(), HighPriorityAc
         val valuesDir = resDir.findChild("values") ?:
                 resDir.createChildDirectory(this, "values")
 
-        val panel = CreateArbResourcePanel(module, parent.name, parent.value?.text?.drop(1)?.dropLast(1) ?: "", valuesDir)
-        val dialog = DialogWrapper(project, panel.panel)
-        dialog.title = text
-        dialog.showAndGet()
+        ApplicationManager.getApplication().invokeLater {
+            val panel = CreateArbResourcePanel(module, parent.name, parent.value?.text?.drop(1)?.dropLast(1) ?: "", valuesDir)
+            val dialog = DialogWrapper(project, panel.panel)
+            dialog.title = text
+            dialog.showAndGet()
 
-        if (dialog.isOK) {
-            panel.selected.forEach {
-                val langFile = (psiManager.findFile(valuesDir.findChild(it)!!) as JsonFile?)!!
-                val jsonProperties = PsiTreeUtil.findChildrenOfAnyType(langFile, JsonProperty::class.java)
-                val exists = jsonProperties.any { it.name == panel.resId }
+            if (dialog.isOK) {
+                panel.selected.forEach {
+                    val langFile = (psiManager.findFile(valuesDir.findChild(it)!!) as JsonFile?)!!
+                    val jsonProperties = PsiTreeUtil.findChildrenOfAnyType(langFile, JsonProperty::class.java)
+                    val exists = jsonProperties.any { it.name == panel.resId }
 
-                if (!exists) {
-                    val buffer = StringBuilder(langFile.text.subSequence(0, langFile.textLength - 1))
-                    if (jsonProperties.isNotEmpty()) buffer.append(",")
-                    buffer.append("  \"${panel.resId}\": \"${panel.resValue}\"").append("}")
-                    runWriteAction {
-                        CommandProcessor.getInstance().executeCommand(project, {
-                            documentManager.getDocument(langFile)!!.setText(buffer.toString())
-                            CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
-                        }, "Override string in other languages", "Override string in other languages")
+                    if (!exists) {
+                        val buffer = StringBuilder(langFile.text.subSequence(0, langFile.textLength - 1))
+                        if (jsonProperties.isNotEmpty()) buffer.append(",")
+                        buffer.append("  \"${panel.resId}\": \"${panel.resValue}\"").append("}")
+                        runWriteAction {
+                            CommandProcessor.getInstance().executeCommand(project, {
+                                documentManager.getDocument(langFile)!!.setText(buffer.toString())
+                                CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
+                            }, "Override string in other languages", "Override string in other languages")
+                        }
                     }
                 }
             }

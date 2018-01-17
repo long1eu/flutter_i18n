@@ -37,6 +37,6 @@ class Register(private val project: Project) : ProjectComponent {
     override fun projectClosed() {
         val am = ActionManager.getInstance()
         val a = am.getAction("FlutterI18n.RebuildI18nFile")
-        a.templatePresentation.isEnabled = false
+        a?.templatePresentation?.isEnabled = false
     }
 }

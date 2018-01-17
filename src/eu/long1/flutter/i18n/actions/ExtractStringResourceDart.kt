@@ -4,6 +4,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
@@ -58,41 +59,43 @@ class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityA
         val valuesDir = resDir.findChild("values") ?:
                 resDir.createChildDirectory(this, "values")
 
-        val panel = CreateArbResourcePanel(module, resId ?: "", dartExpression?.text?.drop(1)?.dropLast(1) ?: "", valuesDir)
-        val dialog = DialogWrapper(project, panel.panel)
-        dialog.title = "Extract string resource"
-        dialog.showAndGet()
+        ApplicationManager.getApplication().invokeLater {
+            val panel = CreateArbResourcePanel(module, resId ?: "", dartExpression?.text?.drop(1)?.dropLast(1) ?: "", valuesDir)
+            val dialog = DialogWrapper(project, panel.panel)
+            dialog.title = "Extract string resource"
+            dialog.showAndGet()
 
-        if (dialog.isOK && panel.selected.isNotEmpty()) {
+            if (dialog.isOK && panel.selected.isNotEmpty()) {
 
-            if (dartExpression != null) {
-                val doc = (PsiDocumentManager.getInstance(project).getPsiFile(editor.document)!!)
-                val fileText = dartExpression.text
-                val newText = doc.text.replaceRange(dartExpression.textOffset,
-                        dartExpression.textOffset + fileText.length,
-                        "S.of(context).${panel.resId}")
+                if (dartExpression != null) {
+                    val doc = (PsiDocumentManager.getInstance(project).getPsiFile(editor.document)!!)
+                    val fileText = dartExpression.text
+                    val newText = doc.text.replaceRange(dartExpression.textOffset,
+                            dartExpression.textOffset + fileText.length,
+                            "S.of(context).${panel.resId}")
 
-                runWriteAction {
-                    CommandProcessor.getInstance().executeCommand(project, {
-                        editor.document.setText(newText)
-                    }, "Extract string resources", "Extract string resources")
-                }
-            }
-
-            panel.selected.forEach {
-                val langFile = (psiManager.findFile(valuesDir.findChild(it)!!) as JsonFile?)!!
-                val jsonProperties = PsiTreeUtil.findChildrenOfAnyType(langFile, JsonProperty::class.java)
-                val exists = jsonProperties.any { it.name == panel.resId }
-
-                if (!exists) {
-                    val buffer = StringBuilder(langFile.text.subSequence(0, langFile.textLength - 1))
-                    if (jsonProperties.isNotEmpty()) buffer.append(",")
-                    buffer.append("  \"${panel.resId}\": \"${panel.resValue}\"").append("}")
                     runWriteAction {
                         CommandProcessor.getInstance().executeCommand(project, {
-                            PsiDocumentManager.getInstance(project).getDocument(langFile)!!.setText(buffer.toString())
-                            CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
+                            editor.document.setText(newText)
                         }, "Extract string resources", "Extract string resources")
+                    }
+                }
+
+                panel.selected.forEach {
+                    val langFile = (psiManager.findFile(valuesDir.findChild(it)!!) as JsonFile?)!!
+                    val jsonProperties = PsiTreeUtil.findChildrenOfAnyType(langFile, JsonProperty::class.java)
+                    val exists = jsonProperties.any { it.name == panel.resId }
+
+                    if (!exists) {
+                        val buffer = StringBuilder(langFile.text.subSequence(0, langFile.textLength - 1))
+                        if (jsonProperties.isNotEmpty()) buffer.append(",")
+                        buffer.append("  \"${panel.resId}\": \"${panel.resValue}\"").append("}")
+                        runWriteAction {
+                            CommandProcessor.getInstance().executeCommand(project, {
+                                PsiDocumentManager.getInstance(project).getDocument(langFile)!!.setText(buffer.toString())
+                                CodeStyleManager.getInstance(psiManager).reformatText(langFile, 0, buffer.length)
+                            }, "Extract string resources", "Extract string resources")
+                        }
                     }
                 }
             }
