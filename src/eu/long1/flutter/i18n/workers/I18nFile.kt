@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
@@ -41,7 +42,7 @@ class I18nFile(private val project: Project) {
 
         data.keys.forEach {
             if (it == "en") builder.append("class en extends S {\n  en(Locale locale) : super(locale);\n}\n")
-            else generateLangClass(it, data, builder)
+            else appendLangClass(it, data, builder)
         }
 
         appendDelegateClass(data, builder)
@@ -60,7 +61,7 @@ class I18nFile(private val project: Project) {
         it.extension == ArbFileType.defaultExtension && it.name.startsWith("strings_", true)
     } as ArrayList
 
-    private fun appendSClass(en: HashMap<String, String>, builder: StringBuilder) {
+    internal fun appendSClass(en: HashMap<String, String>, builder: StringBuilder) {
         val ids = ArrayList<String>(en.keys)
 
         val pluralsMaps = HashMap<String, ArrayList<String>>()
@@ -79,7 +80,7 @@ class I18nFile(private val project: Project) {
         builder.append("}\n\n")
     }
 
-    private fun generateLangClass(lang: String, map: HashMap<String, HashMap<String, String>>, builder: StringBuilder) {
+    internal fun appendLangClass(lang: String, map: HashMap<String, HashMap<String, String>>, builder: StringBuilder) {
         val langMap = map[lang]!!
         val enIds = ArrayList<String>(map["en"]!!.keys)
         val ids = ArrayList(langMap.keys).filter { enIds.contains(it) } as ArrayList
@@ -209,7 +210,7 @@ class I18nFile(private val project: Project) {
     }
 
 
-    private fun getStringFromFile(file: JsonFile): HashMap<String, String>? {
+    internal fun getStringFromFile(file: PsiFile): HashMap<String, String>? {
         if (PsiTreeUtil.findChildOfType(file, PsiErrorElement::class.java) != null) return null
         val langMap = HashMap<String, String>()
         PsiTreeUtil.findChildrenOfType(file, JsonProperty::class.java).forEach {

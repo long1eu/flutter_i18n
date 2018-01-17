@@ -78,7 +78,7 @@ class NewArbFileAction : AnAction() {
                     document.addDocumentListener(object : DocumentListener {
                         override fun documentChanged(event: DocumentEvent?) {
                             ApplicationManager.getApplication().invokeLater(
-                                    Runnable { I18nFile.generate(project, valuesFolder) }, project.disposed)
+                                    Runnable { I18nFile(project).generate() }, project.disposed)
                         }
                     })
                 }

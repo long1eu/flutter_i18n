@@ -9,9 +9,7 @@ import io.flutter.utils.FlutterModuleUtils
 class RebuildI18nFile : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        val resFolder = e.project!!.baseDir.findChild("res") ?: e.project!!.baseDir.createChildDirectory(this, "res")
-        val valuesFolder = resFolder.findChild("values") ?: resFolder.createChildDirectory(this, "values")
-        I18nFile.generate(e.project!!, valuesFolder)
+        I18nFile(e.project!!).generate()
     }
 
     override fun update(e: AnActionEvent) {
