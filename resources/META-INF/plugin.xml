@@ -47,10 +47,12 @@
         <intentionAction>
             <className>eu.long1.flutter.i18n.actions.ExtractStringResourceDart</className>
             <category>String Resources</category>
+            <descriptionDirectoryName>ExtractStringResourceDart</descriptionDirectoryName>
         </intentionAction>
         <intentionAction >
             <className>eu.long1.flutter.i18n.actions.ExtractStringResourceArb</className>
             <category>String Resources</category>
+            <descriptionDirectoryName>ExtractStringResourceArb</descriptionDirectoryName>
         </intentionAction>
     </extensions>
 
@@ -67,6 +69,12 @@
     <project-components>
         <component>
             <implementation-class>eu.long1.flutter.i18n.Register</implementation-class>
+        </component>
+        <component>
+            <implementation-class>eu.long1.flutter.i18n.actions.ExtractStringResourceDart</implementation-class>
+        </component>
+        <component>
+            <implementation-class>eu.long1.flutter.i18n.actions.ExtractStringResourceArb</implementation-class>
         </component>
     </project-components>
 

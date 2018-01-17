@@ -99,7 +99,6 @@ class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityA
         }
     }
 
-
     @Suppress("UNCHECKED_CAST")
     private fun getId(project: Project, editor: Editor?, element: PsiElement): String? {
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor!!.document)!!

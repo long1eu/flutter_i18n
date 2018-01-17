@@ -4,6 +4,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.json.psi.JsonFile
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.project.Project
@@ -85,11 +86,12 @@ object ArbDocumentListener : DocumentListener {
         val dartDocument = documentManager.getDocument(dartFile)!!
 
         runWriteAction {
-            CommandProcessor.getInstance().executeCommand(project, {
-                dartDocument.setReadOnly(false)
-                dartDocument.replaceString(start, end, classSB.toString())
-                dartDocument.setReadOnly(true)
-            }, "Update i18n.dart", "", dartDocument)
+            val manager = UndoManager.getInstance(project)
+
+            if (!manager.isUndoInProgress && !manager.isRedoInProgress)
+                CommandProcessor.getInstance().executeCommand(project, {
+                    dartDocument.replaceString(start, end, classSB.toString())
+                }, "Update i18n.dart", "", dartDocument)
         }
     }
 

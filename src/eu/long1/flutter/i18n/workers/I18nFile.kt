@@ -73,9 +73,7 @@ object I18nFile {
                     val document = documentManager.getDocument(psiFile)!!
 
                     CommandProcessor.getInstance().executeCommand(project, {
-                        document.setReadOnly(false)
                         document.setText(i18nFile)
-                        document.setReadOnly(true)
                         documentManager.commitDocument(document)
                         log.i("i18n.dart is up to date")
                         log.w(Date().time)

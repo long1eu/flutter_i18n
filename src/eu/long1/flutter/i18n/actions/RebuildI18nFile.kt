@@ -15,9 +15,11 @@ class RebuildI18nFile : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (!FlutterModuleUtils.usesFlutter(e.project!!)) {
-            e.presentation.isEnabled = false
-            return
+        e.project?.let {
+            if (!FlutterModuleUtils.usesFlutter(it)) {
+                e.presentation.isEnabled = false
+                return
+            }
         }
 
         e.presentation.icon = FlutterI18nIcons.ArbRefreshAction
