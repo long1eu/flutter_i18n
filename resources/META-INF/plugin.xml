@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>FlutterI18n</id>
     <name>Flutter i18n</name>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <vendor email="home@long1.eu">long1eu</vendor>
     <depends>com.intellij.modules.json</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -13,6 +13,12 @@
     </description>
 
     <change-notes><![CDATA[
+    <p><strong><span style="font-size: 18px;">0.0.4</span></strong></p>
+    <ul>
+    <li>add intention action to extract the string resources</li>
+	<li>add intent action to override the string in another language</li>
+    </ul>
+
     <p><strong><span style="font-size: 18px;">0.0.3</span></strong></p>
     <ul>
     <li>fixed crash on Flutter</li>
