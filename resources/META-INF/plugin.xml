@@ -39,6 +39,7 @@
     ]]>
     </change-notes>
 
+
     <idea-version since-build="145.0"/>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -47,12 +48,10 @@
         <intentionAction>
             <className>eu.long1.flutter.i18n.actions.ExtractStringResourceDart</className>
             <category>String Resources</category>
-            <descriptionDirectoryName>ExtractStringResourceDart</descriptionDirectoryName>
         </intentionAction>
         <intentionAction >
             <className>eu.long1.flutter.i18n.actions.ExtractStringResourceArb</className>
             <category>String Resources</category>
-            <descriptionDirectoryName>ExtractStringResourceArb</descriptionDirectoryName>
         </intentionAction>
     </extensions>
 
