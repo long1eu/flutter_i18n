@@ -12,12 +12,12 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import eu.long1.flutter.i18n.arb.ArbFileType
 import eu.long1.flutter.i18n.files.FileHelpers
-import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-class I18nFile(private val project: Project) {
+class I18nFileGenerator(private val project: Project) {
 
     private val psiManager = PsiManager.getInstance(project)
     private val documentManager = PsiDocumentManager.getInstance(project)
@@ -65,7 +65,7 @@ class I18nFile(private val project: Project) {
         val ids = ArrayList<String>(en.keys)
 
         val pluralsMaps = HashMap<String, ArrayList<String>>()
-        val plurals = findPluralsKeys(ids, pluralsMaps)
+        val plurals = findPluralsIds(ids, pluralsMaps)
         ids -= plurals
 
         val parametrized = ids.filter { en[it]!!.contains("$") }
@@ -73,9 +73,9 @@ class I18nFile(private val project: Project) {
 
         builder.append(sClassHeader)
 
-        ids.forEach { appendStringField(it, en[it]!!, builder, false) }
-        parametrized.forEach { appendParametrizedField(it, en[it]!!, builder, false) }
-        pluralsMaps.keys.forEach { appendPluralField(it, pluralsMaps[it]!!, en, builder, false) }
+        ids.forEach { appendStringMethod(it, en[it]!!, builder, false) }
+        parametrized.forEach { appendParametrizedMethod(it, en[it]!!, builder, false) }
+        pluralsMaps.keys.forEach { appendPluralMethod(it, pluralsMaps[it]!!, en, builder, false) }
 
         builder.append("}\n\n")
     }
@@ -86,7 +86,7 @@ class I18nFile(private val project: Project) {
         val ids = ArrayList(langMap.keys).filter { enIds.contains(it) } as ArrayList
 
         val pluralsMaps = HashMap<String, ArrayList<String>>()
-        val plurals = findPluralsKeys(ids, pluralsMaps)
+        val plurals = findPluralsIds(ids, pluralsMaps)
         ids -= plurals
 
         val parametrized = ids.filter { langMap[it]!!.contains("$") }
@@ -96,9 +96,9 @@ class I18nFile(private val project: Project) {
         builder.append("class $lang extends S {\n  $lang(Locale locale) : super(locale);\n\n   " +
                 "@override\n  TextDirection get textDirection => TextDirection.${if (rtl.contains(lang.split("_")[0])) "rtl" else "ltr"};\n\n")
 
-        ids.forEach { appendStringField(it, langMap[it]!!, builder) }
-        parametrized.forEach { appendParametrizedField(it, langMap[it]!!, builder) }
-        pluralsMaps.keys.forEach { appendPluralField(it, pluralsMaps[it]!!, langMap, builder) }
+        ids.forEach { appendStringMethod(it, langMap[it]!!, builder) }
+        parametrized.forEach { appendParametrizedMethod(it, langMap[it]!!, builder) }
+        pluralsMaps.keys.forEach { appendPluralMethod(it, pluralsMaps[it]!!, langMap, builder) }
 
         builder.append("}\n\n")
 
@@ -138,12 +138,12 @@ class I18nFile(private val project: Project) {
     }
 
 
-    private fun appendStringField(id: String, value: String, builder: StringBuilder, isOverride: Boolean = true) {
+    internal fun appendStringMethod(id: String, value: String, builder: StringBuilder, isOverride: Boolean = true) {
         if (isOverride) builder.append("  @override\n")
         builder.append("  String get $id => \"$value\";\n")
     }
 
-    private fun appendParametrizedField(id: String, value: String, builder: StringBuilder, isOverride: Boolean = true) {
+    internal fun appendParametrizedMethod(id: String, value: String, builder: StringBuilder, isOverride: Boolean = true) {
         PARAMETER_MATCHER.reset(value)
 
         if (isOverride) builder.append("  @override\n")
@@ -156,32 +156,38 @@ class I18nFile(private val project: Project) {
         builder.append(") => \"$value\";\n")
     }
 
-    private fun appendPluralField(id: String, list: ArrayList<String>, mapLang: HashMap<String, String>,
-                                  builder: StringBuilder, isOverride: Boolean = true) {
-        val zero = list.contains("Zero")
-        val one = list.contains("One")
-        val two = list.contains("Two")
-        val other = list.contains("Other")
-        val few = list.contains("Few")
-        val many = list.contains("Many")
+    internal fun appendPluralMethod(id: String, countsList: ArrayList<String>, valuesMap: HashMap<String, String>,
+                                    builder: StringBuilder, isOverride: Boolean = true) {
+        val zero = countsList.contains("Zero")
+        val one = countsList.contains("One")
+        val two = countsList.contains("Two")
+        val few = countsList.contains("Few")
+        val many = countsList.contains("Many")
 
 
-        val parameterName = if (other) {
-            PARAMETER_MATCHER.reset(mapLang["${id}Other"]!!).find()
+        val parameterName: String = {
+            PARAMETER_MATCHER.reset(valuesMap["${id}Other"]!!).find()
             PARAMETER_MATCHER.group().substring(1)
-        } else "quantity"
+        }()
 
         if (isOverride) builder.append("  @override\n")
         builder.append("  String $id(String $parameterName) {\n    switch ($parameterName) {\n")
 
-        if (zero) builder.append("      case \"0\":\n        return \"${mapLang["${id}Zero"]!!}\";\n")
-        if (one) builder.append("      case \"1\":\n        return \"${mapLang["${id}One"]!!}\";\n")
-        if (two) builder.append("      case \"2\":\n        return \"${mapLang["${id}Two"]!!}\";\n")
-        if (few) builder.append("      case \"few\":\n        return \"${mapLang["${id}Few"]!!}\";\n")
-        if (many) builder.append("      case \"many\":\n        return \"${mapLang["${id}Many"]!!}\";\n")
-        if (other) builder.append("      default:\n        return \"${mapLang["${id}Other"]!!}\";\n")
-        else builder.append("      default:\n        return \"$\";\n")
-        builder.append("    }\n  }\n")
+        if (zero) builder.append("      case \"0\":\n        return \"${valuesMap["${id}Zero"]!!}\";\n")
+        if (one) builder.append("      case \"1\":\n        return \"${valuesMap["${id}One"]!!}\";\n")
+        if (two) builder.append("      case \"2\":\n        return \"${valuesMap["${id}Two"]!!}\";\n")
+        if (few) builder.append("      case \"few\":\n        return \"${valuesMap["${id}Few"]!!}\";\n")
+        if (many) builder.append("      case \"many\":\n        return \"${valuesMap["${id}Many"]!!}\";\n")
+        builder.append("      default:\n        return \"${valuesMap["${id}Other"]!!}\";\n    }\n  }\n")
+    }
+
+    fun getCountFromValue(text: String): String? = when (text) {
+        "0" -> "Zero"
+        "1" -> "One"
+        "2" -> "Two"
+        "few" -> "Few"
+        "many" -> "Many"
+        else -> throw IllegalArgumentException("This value $text is not valid.")
     }
 
     /**
@@ -196,17 +202,42 @@ class I18nFile(private val project: Project) {
         return virtualFile
     }
 
-    private fun findPluralsKeys(ids: ArrayList<String>, pluralsMaps: HashMap<String, ArrayList<String>>): List<String> = ids.filter {
-        PLURAL_MATCHER.reset(it)
-        val find = PLURAL_MATCHER.find()
-        if (find) {
-            val id = PLURAL_MATCHER.group(1)
-            val quantity = PLURAL_MATCHER.group(2)
-            val list = pluralsMaps[id] ?: ArrayList()
-            list.add(quantity)
-            pluralsMaps[id] = list
+    /**
+     * Searches for plurals in the ids of the strings and return a list will al of them.
+     *
+     * @param ids contains the list that needs to be searched for plurals
+     * @param pluralsMaps we append to this map the id of the plural and a list of all the qualities("One", "Two", ...)
+     * that were declared.
+     *
+     * @return A list with the ids that are considered plurals and that will be treated separately.
+     *
+     * NOTE: It is not considered a plural when the Other quantity is not declared. In this case the other qualities
+     * will be treated as independent ids.
+     */
+    internal fun findPluralsIds(ids: ArrayList<String>, pluralsMaps: HashMap<String, ArrayList<String>>): List<String> {
+        val map = HashMap<String, ArrayList<String>>()
+        val pluralIds = ids.filter {
+            PLURAL_MATCHER.reset(it)
+            val find = PLURAL_MATCHER.find()
+            if (find) {
+                val id = PLURAL_MATCHER.group(1)
+                val quantity = PLURAL_MATCHER.group(2)
+                val list = map[id] ?: ArrayList()
+                list.add(quantity)
+                map[id] = list
+            }
+            find
+        } as ArrayList
+
+        HashMap(map).forEach { id, counts ->
+            if (counts.none { it == "Other" }) {
+                counts.forEach { count -> pluralIds.remove("$id$count") }
+                map.remove(id)
+            }
         }
-        find
+
+        pluralsMaps.putAll(map)
+        return pluralIds
     }
 
 
@@ -292,4 +323,6 @@ class I18nFile(private val project: Project) {
 
         private val rtl: Set<String> = setOf("ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi")
     }
+
+
 }

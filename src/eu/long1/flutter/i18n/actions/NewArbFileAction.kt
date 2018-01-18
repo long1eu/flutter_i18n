@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
-import eu.long1.flutter.i18n.workers.I18nFile
+import eu.long1.flutter.i18n.workers.I18nFileGenerator
 import eu.long1.flutter.i18n.Log
 import io.flutter.utils.FlutterModuleUtils
 import org.jetbrains.android.uipreview.DeviceConfiguratorPanel
@@ -78,7 +78,7 @@ class NewArbFileAction : AnAction() {
                     document.addDocumentListener(object : DocumentListener {
                         override fun documentChanged(event: DocumentEvent?) {
                             ApplicationManager.getApplication().invokeLater(
-                                    Runnable { I18nFile(project).generate() }, project.disposed)
+                                    Runnable { I18nFileGenerator(project).generate() }, project.disposed)
                         }
                     })
                 }
