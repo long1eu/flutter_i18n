@@ -1,3 +1,1 @@
-String string = "This is my string";
-
 Widget text = new Text("This is another string");
