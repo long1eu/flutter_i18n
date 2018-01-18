@@ -16,7 +16,7 @@ import com.intellij.psi.PsiManager
 import eu.long1.flutter.i18n.workers.I18nFileGenerator
 import eu.long1.flutter.i18n.Log
 import io.flutter.utils.FlutterModuleUtils
-import org.jetbrains.android.uipreview.DeviceConfiguratorPanel
+import eu.long1.flutter.i18n.uipreview.DeviceConfiguratorPanel
 import javax.swing.JComponent
 
 
