@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import eu.long1.flutter.i18n.files.Syntax
-import eu.long1.flutter.i18n.uipreview.CreateArbResourcePanel.showAndCreateFile
+import eu.long1.flutter.i18n.uipreview.DialogWrapper.Companion.showAndCreateFile
 
 class CreateStringResourceQuickFix(element: PsiElement, private val fieldName: String) : LocalQuickFixOnPsiElement(element) {
 
@@ -18,7 +18,7 @@ class CreateStringResourceQuickFix(element: PsiElement, private val fieldName: S
     override fun invoke(project: Project, psiFile: PsiFile, element: PsiElement, element2: PsiElement) {
         val module = ModuleUtilCore.findModuleForFile(psiFile.virtualFile, project)!!
 
-        WriteCommandAction.runWriteCommandAction(project, text, Syntax.GROUP_NAME,
+        WriteCommandAction.runWriteCommandAction(project, text, Syntax.GROUP_ID,
                 Runnable { showAndCreateFile(project, module, fieldName, null, text) }, psiFile)
     }
 }

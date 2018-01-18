@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2012 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.jetbrains.android.uipreview;
+package eu.long1.flutter.i18n.uipreview;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -31,28 +16,24 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import eu.long1.flutter.i18n.actions.NewArbFileAction;
+import eu.long1.flutter.i18n.files.FileHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.*;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class CreateArbResourcePanel {
 
     private Module module;
     private VirtualFile valuesDir;
 
     private JPanel panel;
-    private JTextField resIdField;
+    private JTextField idField;
     private JPanel stringsFilesPanel;
     private JBLabel stringsFilesDescriptionAction;
-    private JTextField resValueField;
+    private JTextField valueField;
     private JBLabel valueLabel;
-    private JBLabel resourceLabel;
+    private JBLabel idLabel;
 
     private Map<String, JCheckBox> checkBoxMap = Collections.emptyMap();
     private String[] stringsFilesNames = ArrayUtil.EMPTY_STRING_ARRAY;
@@ -60,9 +41,9 @@ public class CreateArbResourcePanel {
     private final CheckBoxList stringsFiles;
 
 
-    public CreateArbResourcePanel(@NotNull Module module, @NotNull String resId, @NotNull String resValue, VirtualFile valuesDir) {
+    public CreateArbResourcePanel(@NotNull Module module, String resId, String resValue) {
         this.module = module;
-        this.valuesDir = valuesDir;
+        this.valuesDir = FileHelpers.getValuesFolder(module.getProject());
 
         setChangeNameVisible(false);
         setChangeValueVisible(false);
@@ -98,9 +79,9 @@ public class CreateArbResourcePanel {
         setChangeValueVisible(true);
         setChangeNameVisible(true);
 
-        resValueField.setText(resValue);
-        resIdField.setText(resId);
-        resIdField.requestFocusInWindow();
+        valueField.setText(resValue);
+        idField.setText(resId);
+        idField.requestFocusInWindow();
 
         updateStringFiles();
     }
@@ -210,12 +191,12 @@ public class CreateArbResourcePanel {
 
     @NotNull
     public String getResId() {
-        return resIdField.getText().trim();
+        return idField.getText().trim();
     }
 
     @NotNull
     public String getResValue() {
-        return resValueField.getText().trim();
+        return valueField.getText().trim();
     }
 
     @NotNull
@@ -235,13 +216,13 @@ public class CreateArbResourcePanel {
     }
 
     private void setChangeValueVisible(boolean isVisible) {
-        resValueField.setVisible(isVisible);
+        valueField.setVisible(isVisible);
         valueLabel.setVisible(isVisible);
     }
 
     private void setChangeNameVisible(boolean isVisible) {
-        resIdField.setVisible(isVisible);
-        resourceLabel.setVisible(isVisible);
+        idField.setVisible(isVisible);
+        idLabel.setVisible(isVisible);
     }
 
 

@@ -1,4 +1,4 @@
-package eu.long1.flutter.i18n
+package eu.long1.flutter.i18n.workers
 
 import com.intellij.json.psi.JsonElementGenerator
 import com.intellij.json.psi.JsonFile
@@ -17,13 +17,14 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.*
 import com.jetbrains.lang.dart.util.DartElementGenerator
+import eu.long1.flutter.i18n.Log
 import eu.long1.flutter.i18n.files.FileHelpers
 import eu.long1.flutter.i18n.items.MethodItem
-import eu.long1.flutter.i18n.workers.I18nFileGenerator
 import io.flutter.utils.FlutterModuleUtils
 import java.util.regex.Pattern
 import kotlin.system.measureTimeMillis
 
+//todo it looks like the strings are added to the S class an not to specific class
 class Initializer : StartupActivity, DocumentListener {
 
     private lateinit var psiManager: PsiManager
@@ -245,6 +246,6 @@ class Initializer : StartupActivity, DocumentListener {
         private val log = Log()
         private val PLURAL_MATCHER = Pattern.compile("(.*)(Zero|One|Two|Few|Many|Other)").matcher("")
 
-        fun getStringFromExpression(expression: PsiElement): String = expression.text.drop(1).dropLast(1)
+        fun getStringFromExpression(expression: PsiElement?): String = expression?.text?.drop(1)?.dropLast(1) ?: ""
     }
 }

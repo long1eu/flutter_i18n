@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.android.uipreview.CreateArbResourcePanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="eu.long1.flutter.i18n.uipreview.CreateArbResourcePanel">
   <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="5" right="0"/>
     <constraints>
@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="43fab" class="com.intellij.ui.components.JBLabel" binding="resourceLabel">
+      <component id="43fab" class="com.intellij.ui.components.JBLabel" binding="idLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -17,7 +17,7 @@
           <text value="String &amp;id:"/>
         </properties>
       </component>
-      <component id="83b48" class="javax.swing.JTextField" binding="resIdField">
+      <component id="83b48" class="javax.swing.JTextField" binding="idField">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -50,7 +50,7 @@
           <text value="String &amp;value:"/>
         </properties>
       </component>
-      <component id="94d5" class="javax.swing.JTextField" binding="resValueField">
+      <component id="94d5" class="javax.swing.JTextField" binding="valueField">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>

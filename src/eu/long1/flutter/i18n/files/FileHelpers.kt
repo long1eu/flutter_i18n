@@ -10,6 +10,7 @@ object FileHelpers {
             project.baseDir.findChild("res")
                     ?: project.baseDir.createChildDirectory(this, "res")
 
+    @JvmStatic
     fun getValuesFolder(project: Project): VirtualFile =
             getResourceFolder(project).findChild("values")
                     ?: getResourceFolder(project).createChildDirectory(this, "values")
@@ -20,7 +21,4 @@ object FileHelpers {
 
         return generated.findOrCreateChildData(this, "i18n.dart")
     }
-
-    fun getStringEnFile(project: Project) =
-            getValuesFolder(project).findChild("strings_en.arb")!!
 }

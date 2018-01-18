@@ -10,9 +10,7 @@ import io.flutter.utils.FlutterModuleUtils
 class RebuildI18nFile : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        WriteCommandAction.runWriteCommandAction(e.project) {
-            I18nFileGenerator(e.project!!).generate()
-        }
+        WriteCommandAction.runWriteCommandAction(e.project) { I18nFileGenerator(e.project!!).generate() }
     }
 
     override fun update(e: AnActionEvent) {
