@@ -21,8 +21,10 @@ import eu.long1.flutter.i18n.Log
 import eu.long1.flutter.i18n.files.FileHelpers
 import eu.long1.flutter.i18n.items.MethodItem
 import io.flutter.utils.FlutterModuleUtils
+import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
+
 import java.util.regex.Pattern
-import kotlin.system.measureTimeMillis
 
 //todo it looks like the strings are added to the S class an not to specific class
 class Initializer : StartupActivity, DocumentListener {
@@ -39,52 +41,56 @@ class Initializer : StartupActivity, DocumentListener {
 
         psiManager = PsiManager.getInstance(project)
         documentManager = PsiDocumentManager.getInstance(project)
-        valuesFolder = FileHelpers.getValuesFolder(project)
 
         WriteCommandAction.runWriteCommandAction(project) {
+            valuesFolder = FileHelpers.getValuesFolder(project)
             val valuesFolder = FileHelpers.getValuesFolder(project)
 
-            I18nFileGenerator(project).generate()
-
+            /*
             valuesFolder.children.forEach {
                 val document = documentManager.getDocument(psiManager.findFile(it)!!)
                 document!!.addDocumentListener(this)
+            }
+            */
+        }
+
+        Observable.interval(1, TimeUnit.SECONDS).forEach {
+            WriteCommandAction.runWriteCommandAction(project) {
+                I18nFileGenerator(project).generate()
             }
         }
     }
 
     override fun documentChanged(event: DocumentEvent) {
-        val time = measureTimeMillis {
-            documentManager.commitDocument(event.document)
-            val changedFile = documentManager.getPsiFile(event.document)!! as? JsonFile ?: return
-            val undoManager = UndoManager.getInstance(changedFile.project)
-            if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) return
+        documentManager.commitDocument(event.document)
+        val changedFile = documentManager.getPsiFile(event.document)!! as? JsonFile ?: return
+        val undoManager = UndoManager.getInstance(changedFile.project)
+        if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) return
 
-            if (PsiTreeUtil.findChildOfType(changedFile, PsiErrorElement::class.java) == null) {
-                val lang = changedFile.virtualFile.nameWithoutExtension.substringAfter("_")
-                val project = changedFile.project
+        if (PsiTreeUtil.findChildOfType(changedFile, PsiErrorElement::class.java) == null) {
+            val lang = changedFile.virtualFile.nameWithoutExtension.substringAfter("_")
+            val project = changedFile.project
 
-                val dartFile = FileHelpers.getI18nFile(project)
-                val dartPsi = psiManager.findFile(dartFile)!!
+            val dartFile = FileHelpers.getI18nFile(project)
+            val dartPsi = psiManager.findFile(dartFile)!!
 
-                val replaceClass = PsiTreeUtil.findChildrenOfType(dartPsi, DartClass::class.java).firstOrNull { it.name == lang } ?: return
-                val methodItem = getMethodItem(event, changedFile, event.offset, replaceClass)
-                methodItem.dartMethod?.delete()
+            val replaceClass = PsiTreeUtil.findChildrenOfType(dartPsi, DartClass::class.java).firstOrNull { it.name == lang }
+                    ?: return
+            val methodItem = getMethodItem(event, changedFile, event.offset, replaceClass)
+            methodItem.dartMethod?.delete()
 
-                if (methodItem.method.isNullOrBlank()) return
+            if (methodItem.method.isNullOrBlank()) return
 
-                val dummyFile = DartElementGenerator.createDummyFile(project, "class Dummy {\n${methodItem.method}}")!!
-                val methods = PsiTreeUtil.findChildrenOfAnyType(dummyFile, DartMethodDeclaration::class.java, DartGetterDeclaration::class.java)
+            val dummyFile = DartElementGenerator.createDummyFile(project, "class Dummy {\n${methodItem.method}}")!!
+            val methods = PsiTreeUtil.findChildrenOfAnyType(dummyFile, DartMethodDeclaration::class.java, DartGetterDeclaration::class.java)
 
-                methods.forEach { replaceClass.methods.last().parent.add(it) }
-            }
+            methods.forEach { replaceClass.methods.last().parent.add(it) }
         }
-        println(time)
     }
 
     private fun getMethodItem(event: DocumentEvent, file: JsonFile, offset: Int, clazz: DartClass): MethodItem {
-        val property = PsiTreeUtil.findElementOfClassAtOffset(file, offset, JsonProperty::class.java, false) ?:
-                return deleteMethod(event, file, clazz)
+        val property = PsiTreeUtil.findElementOfClassAtOffset(file, offset, JsonProperty::class.java, false)
+                ?: return deleteMethod(event, file, clazz)
 
         val jsonValue = property.value
         val method: DartComponent?

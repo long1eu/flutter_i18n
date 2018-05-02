@@ -13,5 +13,7 @@
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="commons-io:commons-io:2.5" level="project" />
     <orderEntry type="library" name="com.jfoenix:jfoenix:8.0.1" level="project" />
+    <orderEntry type="library" name="io.reactivex.rxjava2:rxkotlin:2.2.0" level="project" />
+    <orderEntry type="library" name="io.reactivex.rxjava2:rxjava:2.1.13" level="project" />
   </component>
 </module>

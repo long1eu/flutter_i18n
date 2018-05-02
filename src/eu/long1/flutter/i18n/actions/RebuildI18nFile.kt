@@ -14,7 +14,7 @@ class RebuildI18nFile : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (e.project != null && !FlutterModuleUtils.usesFlutter(e.project!!)) {
+        if (e.project != null && !FlutterModuleUtils.hasFlutterModule(e.project!!)) {
             e.presentation.isEnabled = false
             return
         }

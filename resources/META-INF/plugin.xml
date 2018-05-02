@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>FlutterI18n</id>
     <name>Flutter i18n</name>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
     <vendor email="home@long1.eu">long1eu</vendor>
     <depends>com.intellij.modules.json</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -13,6 +13,13 @@
     </description>
 
     <change-notes><![CDATA[
+    <p><strong><span style="font-size: 18px;">0.0.5</span></strong></p>
+    <ul>
+    <li>fix some crashes</li>
+	<li>add ignore comment for the dart analyzer</li>
+    <li>change the way files are build</li>
+    </ul>
+
     <p><strong><span style="font-size: 18px;">0.0.4</span></strong></p>
     <ul>
     <li>add intention action to extract the string resources</li>

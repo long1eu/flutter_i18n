@@ -45,7 +45,7 @@ class NewArbFileAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (!FlutterModuleUtils.usesFlutter(e.project!!)) {
+        if (!FlutterModuleUtils.hasFlutterModule(e.project!!)) {
             e.presentation.isEnabled = false
             return
         }
