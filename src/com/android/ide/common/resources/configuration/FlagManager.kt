@@ -15,7 +15,6 @@
  */
 package com.android.ide.common.resources.configuration
 
-import com.android.annotations.Nullable
 import com.android.ide.common.resources.LocaleManager
 import com.google.common.collect.Maps
 import com.intellij.ide.ui.UISettings
@@ -23,6 +22,7 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.util.Function
 import FlutterI18nIcons
+import org.jetbrains.annotations.Nullable
 import java.lang.reflect.Field
 import javax.swing.Icon
 import javax.swing.JList

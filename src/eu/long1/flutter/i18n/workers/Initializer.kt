@@ -21,12 +21,11 @@ import eu.long1.flutter.i18n.Log
 import eu.long1.flutter.i18n.files.FileHelpers
 import eu.long1.flutter.i18n.items.MethodItem
 import io.flutter.utils.FlutterModuleUtils
-import io.reactivex.Observable
+import rx.Observable
 import java.util.concurrent.TimeUnit
 
 import java.util.regex.Pattern
 
-//todo it looks like the strings are added to the S class an not to specific class
 class Initializer : StartupActivity, DocumentListener {
 
     private lateinit var psiManager: PsiManager
