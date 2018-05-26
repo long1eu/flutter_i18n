@@ -46,7 +46,7 @@ If you want to change the last step and to provided a default locale instead of 
   }
 }</pre>
 
-<img src="/extras/arb_icon.png" width="150">
+<img src="https://github.com/long1eu/flutter_i18n/blob/master/extras/arb_icon.png?raw=true" width="150">
 
 ### 2.  Setup the arb files. 
 
