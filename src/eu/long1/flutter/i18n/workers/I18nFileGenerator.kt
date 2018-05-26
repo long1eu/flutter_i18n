@@ -54,7 +54,7 @@ class I18nFileGenerator(private val project: Project) {
 
         if (document.text != i18nFile) {
             document.setText(i18nFile)
-            //CodeStyleManager.getInstance(psiManager).reformatText(dartFile, 0, i18nFile.length)
+            documentManager.commitDocument(document)
         }
     }
 
@@ -254,80 +254,86 @@ class I18nFileGenerator(private val project: Project) {
         private val PLURAL_MATCHER = Pattern.compile("(.*)(Zero|One|Two|Few|Many|Other)").matcher("")
         private val PARAMETER_MATCHER = Pattern.compile("\\$[^\\p{Punct}\\p{Space}\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}–]*").matcher("")
 
-        private const val i18nFileImports = "import 'dart:async';\n\nimport 'package:flutter/foundation.dart';\nimport 'package:flutter/material.dart';\n\n"
+// @formatter:off
+private const val i18nFileImports =
+"""
+import 'dart:async';
 
-        // @formatter:off
-        private const val sClassHeader =
-        """
-        class S implements WidgetsLocalizations {
-          const S();
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+"""
 
-          static const GeneratedLocalizationsDelegate delegate =
-              const GeneratedLocalizationsDelegate();
+private const val sClassHeader =
+"""
+class S implements WidgetsLocalizations {
+  const S();
 
-          static S of(BuildContext context) =>
-              Localizations.of<S>(context, WidgetsLocalizations);
+  static const GeneratedLocalizationsDelegate delegate =
+      const GeneratedLocalizationsDelegate();
 
-          @override
-          TextDirection get textDirection => TextDirection.ltr;
+  static S of(BuildContext context) =>
+      Localizations.of<S>(context, WidgetsLocalizations);
 
-        """
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
 
-        private const val delegateClassHeader =
-        """
-        class GeneratedLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
-          const GeneratedLocalizationsDelegate();
+"""
 
-          List<Locale> get supportedLocales {
-            return const <Locale>[
+private const val delegateClassHeader =
+"""
+class GeneratedLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
+  const GeneratedLocalizationsDelegate();
 
-        """
+  List<Locale> get supportedLocales {
+    return const <Locale>[
 
-        private const val delegateClassResolution =
-        """
-            ];
-          }
+"""
 
-          LocaleResolutionCallback resolution({Locale fallback}) {
-            return (Locale locale, Iterable<Locale> supported) {
-              final Locale languageLocale = new Locale(locale.languageCode, "");
-              if (supported.contains(locale))
-                return locale;
-              else if (supported.contains(languageLocale))
-                return languageLocale;
-              else {
-                final Locale fallbackLocale = fallback ?? supported.first;
-                return fallbackLocale;
-              }
-            };
-          }
+private const val delegateClassResolution =
+"""
+    ];
+  }
 
-          @override
-          Future<WidgetsLocalizations> load(Locale locale) {
-            final String lang = getLang(locale);
-            switch (lang) {
+  LocaleResolutionCallback resolution({Locale fallback}) {
+    return (Locale locale, Iterable<Locale> supported) {
+      final Locale languageLocale = new Locale(locale.languageCode, "");
+      if (supported.contains(locale))
+        return locale;
+      else if (supported.contains(languageLocale))
+        return languageLocale;
+      else {
+        final Locale fallbackLocale = fallback ?? supported.first;
+        return fallbackLocale;
+      }
+    };
+  }
 
-        """
+  @override
+  Future<WidgetsLocalizations> load(Locale locale) {
+    final String lang = getLang(locale);
+    switch (lang) {
 
-        private const val delegateClassEnd =
-        """
-              default:
-                return new SynchronousFuture<WidgetsLocalizations>(const S());
-            }
-          }
+"""
 
-          @override
-          bool isSupported(Locale locale) => supportedLocales.contains(locale);
+private const val delegateClassEnd =
+"""
+      default:
+        return new SynchronousFuture<WidgetsLocalizations>(const S());
+    }
+  }
 
-          @override
-          bool shouldReload(GeneratedLocalizationsDelegate old) => false;
-        }
+  @override
+  bool isSupported(Locale locale) => supportedLocales.contains(locale);
 
-        String getLang(Locale l) => l.countryCode != null && l.countryCode.isEmpty
-            ? l.languageCode
-            : l.toString();
-        """
-        // @formatter:on
+  @override
+  bool shouldReload(GeneratedLocalizationsDelegate old) => false;
+}
+
+String getLang(Locale l) => l.countryCode != null && l.countryCode.isEmpty
+    ? l.languageCode
+    : l.toString();
+"""
+// @formatter:on
 
         private val rtl: Set<String> = setOf("ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi")
     }

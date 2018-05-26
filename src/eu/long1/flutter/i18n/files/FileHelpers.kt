@@ -5,8 +5,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import io.flutter.pub.PubRoot
 
 object FileHelpers {
-
-    private fun getResourceFolder(project: Project): VirtualFile =
+    @JvmStatic
+    fun getResourceFolder(project: Project): VirtualFile =
             project.baseDir.findChild("res")
                     ?: project.baseDir.createChildDirectory(this, "res")
 

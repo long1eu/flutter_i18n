@@ -23,7 +23,6 @@ import eu.long1.flutter.i18n.items.MethodItem
 import io.flutter.utils.FlutterModuleUtils
 import rx.Observable
 import java.util.concurrent.TimeUnit
-
 import java.util.regex.Pattern
 
 class Initializer : StartupActivity, DocumentListener {
@@ -43,7 +42,9 @@ class Initializer : StartupActivity, DocumentListener {
 
         WriteCommandAction.runWriteCommandAction(project) {
             valuesFolder = FileHelpers.getValuesFolder(project)
-            val valuesFolder = FileHelpers.getValuesFolder(project)
+
+
+            //VirtualFileManager.getInstance().addVirtualFileListener(VirtualFileEvent(project))
 
             /*
             valuesFolder.children.forEach {
