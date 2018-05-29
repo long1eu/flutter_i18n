@@ -43,7 +43,6 @@ class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityA
                 ?.take(10)
                 ?.joinToString("_")
 
-        println("id: $resId")
         runWriteCommandAction(project, text, Syntax.GROUP_ID, Runnable {
             showAndCreateFile(project, module, resId, Initializer.getStringFromExpression(dartExpression), text, {
                 val fileText = dartExpression.text

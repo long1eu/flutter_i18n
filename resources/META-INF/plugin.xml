@@ -7,6 +7,8 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.all</depends>
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+
     <depends>Dart</depends>
     <depends>io.flutter</depends>
 
@@ -14,6 +16,11 @@
     </description>
 
     <change-notes><![CDATA[
+    <p><strong><span style="font-size: 18px;">0.0.6+1</span></strong></p>
+    <ul>
+    <li>fixed hebrew const issues</li>
+    </ul>
+
     <p><strong><span style="font-size: 18px;">0.0.6</span></strong></p>
     <ul>
     <li>optimized the S class by adding const constructors and removing unnecessary fields</li>

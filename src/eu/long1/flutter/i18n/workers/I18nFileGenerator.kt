@@ -107,7 +107,7 @@ class I18nFileGenerator(private val project: Project) {
 
         //for hebrew iw=he
         if (lang.startsWith("iw")) {
-            builder.append("class he_IL extends $lang {\n  he_IL();\n\n   " +
+            builder.append("class he_IL extends $lang {\n const he_IL();\n\n   " +
                     "@override\n  TextDirection get textDirection => TextDirection.rtl;\n\n}")
         }
     }
