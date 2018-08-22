@@ -1,0 +1,64 @@
+buildscript {
+    ext.versions = [
+            'kotlin': '1.2.61'
+    ]
+    ext.deps = [
+            gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+    ]
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath deps.gradlePlugin
+    }
+}
+plugins {
+    id "org.jetbrains.intellij" version "0.3.6"
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+intellij {
+    version '2018.2.2' // https://www.jetbrains.com/intellij-repository/releases
+    type "IC"
+    plugins = [
+            "Dart:182.4129.13",
+            "io.flutter:27.1.3",
+            "yaml"
+    ]
+    pluginName 'Flutter i18n'
+}
+
+group = "FlutterI18n"
+version '0.0.6'
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+sourceSets {
+    main.java.srcDirs += "src/main/kotlin"
+    test.java.srcDirs += "src/test/kotlin"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.0"
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+}

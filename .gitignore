@@ -1,3 +1,9 @@
+.gradle
+.gradle/*
+/build
+.idea
+.idea/*
+*.iml
 *.zip
 *.jar
 dep/
