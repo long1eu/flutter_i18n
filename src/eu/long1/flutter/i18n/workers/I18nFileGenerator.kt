@@ -296,6 +296,12 @@ private const val delegateClassResolution =
 
   LocaleResolutionCallback resolution({Locale fallback}) {
     return (Locale locale, Iterable<Locale> supported) {
+      // This fixes a breaking change in Flutter:
+      // https://github.com/flutter/flutter/issues/24064
+      // https://github.com/flutter/flutter/issues/24288
+      if (locale == null || !isSupported(locale)) {
+        return fallback ?? supported.first;
+      }
       final Locale languageLocale = new Locale(locale.languageCode, "");
       if (supported.contains(locale))
         return locale;
