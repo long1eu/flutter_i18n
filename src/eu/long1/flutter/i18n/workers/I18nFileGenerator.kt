@@ -294,24 +294,36 @@ private const val delegateClassResolution =
     ];
   }
 
+  LocaleListResolutionCallback listResolution({Locale fallback}) {
+    return (List<Locale> locales, Iterable<Locale> supported) {
+      return locales == null || locales.isEmpty
+        ? fallback ?? supported.first
+        : _resolve(locales.first, supported, fallback);
+    }
+  }
+
   LocaleResolutionCallback resolution({Locale fallback}) {
     return (Locale locale, Iterable<Locale> supported) {
-      // This fixes a breaking change in Flutter:
-      // https://github.com/flutter/flutter/issues/24064
-      // https://github.com/flutter/flutter/issues/24288
-      if (locale == null || !isSupported(locale)) {
-        return fallback ?? supported.first;
-      }
-      final Locale languageLocale = new Locale(locale.languageCode, "");
-      if (supported.contains(locale))
-        return locale;
-      else if (supported.contains(languageLocale))
-        return languageLocale;
-      else {
-        final Locale fallbackLocale = fallback ?? supported.first;
-        return fallbackLocale;
-      }
+      return _resolve(locale, supported, fallback);
     };
+  }
+
+  LocaleResolutionCallback _resolve(Locale locale, Iterable<Locale> supported, Locale fallback) {
+    // This fixes a breaking change in Flutter:
+    // https://github.com/flutter/flutter/issues/24064
+    // https://github.com/flutter/flutter/issues/24288
+    if (locale == null || !isSupported(locale)) {
+      return fallback ?? supported.first;
+    }
+    final Locale languageLocale = new Locale(locale.languageCode, "");
+    if (supported.contains(locale))
+      return locale;
+    else if (supported.contains(languageLocale))
+      return languageLocale;
+    else {
+      final Locale fallbackLocale = fallback ?? supported.first;
+      return fallbackLocale;
+    }
   }
 
   @override
