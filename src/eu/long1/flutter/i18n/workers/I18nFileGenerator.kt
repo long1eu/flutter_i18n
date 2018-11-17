@@ -130,8 +130,8 @@ class I18nFileGenerator(private val project: Project) {
         map.keys.forEach {
             //for hebrew iw=he
             if (it.startsWith("iw")) {
-                builder.append("      case \"iw_IL\":\n      case \"he_IL\":        return new SynchronousFuture<WidgetsLocalizations>(const he_IL());\n")
-            } else builder.append("      case \"$it\":\n        return new SynchronousFuture<WidgetsLocalizations>(const $it());\n")
+                builder.append("        case \"iw_IL\":\n      case \"he_IL\":        return new SynchronousFuture<WidgetsLocalizations>(const he_IL());\n")
+            } else builder.append("        case \"$it\":\n        return new SynchronousFuture<WidgetsLocalizations>(const $it());\n")
         }
 
         builder.append(delegateClassEnd)
@@ -329,15 +329,17 @@ private const val delegateClassResolution =
   @override
   Future<WidgetsLocalizations> load(Locale locale) {
     final String lang = getLang(locale);
-    switch (lang) {
+    if (lang != null) {
+      switch (lang) {
 
 """
 
 private const val delegateClassEnd =
 """
-      default:
-        return new SynchronousFuture<WidgetsLocalizations>(const S());
+        default:
+          // NO-OP.
     }
+    return new SynchronousFuture<WidgetsLocalizations>(const S());
   }
 
   @override
@@ -348,7 +350,7 @@ private const val delegateClassEnd =
 }
 
 String getLang(Locale l) => l == null
-  ? ""
+  ? null
   : l.countryCode != null && l.countryCode.isEmpty
     ? l.languageCode
     : l.toString();
