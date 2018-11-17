@@ -329,13 +329,15 @@ private const val delegateClassEnd =
   }
 
   @override
-  bool isSupported(Locale locale) => supportedLocales.contains(locale);
+  bool isSupported(Locale locale) => null != locale && supportedLocales.contains(locale);
 
   @override
   bool shouldReload(GeneratedLocalizationsDelegate old) => false;
 }
 
-String getLang(Locale l) => l.countryCode != null && l.countryCode.isEmpty
+String getLang(Locale l) => l == null
+  ? ""
+  : l.countryCode != null && l.countryCode.isEmpty
     ? l.languageCode
     : l.toString();
 """
