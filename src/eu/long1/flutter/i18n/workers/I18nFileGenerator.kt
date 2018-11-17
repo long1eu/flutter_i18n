@@ -341,7 +341,7 @@ private const val delegateClassEnd =
   }
 
   @override
-  bool isSupported(Locale locale) => null != locale && supportedLocales.contains(locale);
+  bool isSupported(Locale locale) => locale != null && supportedLocales.contains(locale);
 
   @override
   bool shouldReload(GeneratedLocalizationsDelegate old) => false;
