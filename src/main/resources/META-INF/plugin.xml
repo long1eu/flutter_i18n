@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>FlutterI18n</id>
     <name>Flutter i18n</name>
-    <version>0.0.7</version>
+    <version>0.0.7+1</version>
     <vendor email="home@long1.eu">long1eu</vendor>
     <depends>com.intellij.modules.json</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -65,7 +65,7 @@
     </change-notes>
 
 
-    <idea-version since-build="145.0"/>
+    <idea-version since-build="183" until-build="183.*"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="eu.long1.flutter.i18n.workers.Initializer"/>

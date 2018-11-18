@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'eu.long1.flutter'
-version '0.0.7'
+version '0.0.7+1'
 
 repositories {
     mavenCentral()
@@ -25,11 +25,11 @@ compileTestKotlin {
 }
 
 intellij {
-    version '182.5107.16'
+    version '2018.3'
     pluginName 'Flutter i18n'
     plugins = [
-            "Dart:182.5124",
-            "io.flutter:30.0.2",
+            "Dart:183.4284.122",
+            "io.flutter:30.0.3",
             "yaml"
     ]
 }
@@ -45,4 +45,5 @@ if (localPropertiesFile.exists()) {
 publishPlugin {
     username = localProperties.getProperty('username')
     password = localProperties.getProperty('password')
+    channels 'nightly'
 }

@@ -77,7 +77,7 @@ class NewArbFileAction : AnAction() {
 
                     PsiDocumentManager.getInstance(project).commitDocument(document)
                     document.addDocumentListener(object : DocumentListener {
-                        override fun documentChanged(event: DocumentEvent?) {
+                        override fun documentChanged(event: DocumentEvent) {
                             ApplicationManager.getApplication().invokeLater(
                                 Runnable { I18nFileGenerator(project).generate() }, project.disposed
                             )
