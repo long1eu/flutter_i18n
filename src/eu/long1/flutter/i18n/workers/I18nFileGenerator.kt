@@ -96,7 +96,7 @@ class I18nFileGenerator(private val project: Project) {
         ids -= parametrized
 
 
-        builder.append("class $lang extends S {\n  const $lang();\n\n   " +
+        builder.append("class $lang extends S {\n  const $lang();\n\n  " +
                 "@override\n  TextDirection get textDirection => TextDirection.${if (rtl.contains(lang.split("_")[0])) "rtl" else "ltr"};\n\n")
 
         ids.forEach { appendStringMethod(it, langMap[it]!!, builder) }
@@ -130,8 +130,8 @@ class I18nFileGenerator(private val project: Project) {
         map.keys.forEach {
             //for hebrew iw=he
             if (it.startsWith("iw")) {
-                builder.append("      case \"iw_IL\":\n      case \"he_IL\":        return new SynchronousFuture<WidgetsLocalizations>(const he_IL());\n")
-            } else builder.append("      case \"$it\":\n        return new SynchronousFuture<WidgetsLocalizations>(const $it());\n")
+                builder.append("        case \"iw_IL\":\n      case \"he_IL\":        return new SynchronousFuture<S>(const he_IL());\n")
+            } else builder.append("        case \"$it\":\n        return new SynchronousFuture<S>(const $it());\n")
         }
 
         builder.append(delegateClassEnd)
@@ -271,8 +271,7 @@ class S implements WidgetsLocalizations {
   static const GeneratedLocalizationsDelegate delegate =
       const GeneratedLocalizationsDelegate();
 
-  static S of(BuildContext context) =>
-      Localizations.of<S>(context, WidgetsLocalizations);
+  static S of(BuildContext context) => Localizations.of<S>(context, S);
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
@@ -281,7 +280,7 @@ class S implements WidgetsLocalizations {
 
 private const val delegateClassHeader =
 """
-class GeneratedLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
+class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
   const GeneratedLocalizationsDelegate();
 
   List<Locale> get supportedLocales {
@@ -294,42 +293,64 @@ private const val delegateClassResolution =
     ];
   }
 
+  LocaleListResolutionCallback listResolution({Locale fallback}) {
+    return (List<Locale> locales, Iterable<Locale> supported) {
+      return locales == null || locales.isEmpty
+        ? fallback ?? supported.first
+        : _resolve(locales.first, supported, fallback);
+    }
+  }
+
   LocaleResolutionCallback resolution({Locale fallback}) {
     return (Locale locale, Iterable<Locale> supported) {
-      final Locale languageLocale = new Locale(locale.languageCode, "");
-      if (supported.contains(locale))
-        return locale;
-      else if (supported.contains(languageLocale))
-        return languageLocale;
-      else {
-        final Locale fallbackLocale = fallback ?? supported.first;
-        return fallbackLocale;
-      }
+      return _resolve(locale, supported, fallback);
     };
   }
 
+  LocaleResolutionCallback _resolve(Locale locale, Iterable<Locale> supported, Locale fallback) {
+    // This fixes a breaking change in Flutter:
+    // https://github.com/flutter/flutter/issues/24064
+    // https://github.com/flutter/flutter/issues/24288
+    if (locale == null || !isSupported(locale)) {
+      return fallback ?? supported.first;
+    }
+    final Locale languageLocale = new Locale(locale.languageCode, "");
+    if (supported.contains(locale))
+      return locale;
+    else if (supported.contains(languageLocale))
+      return languageLocale;
+    else {
+      final Locale fallbackLocale = fallback ?? supported.first;
+      return fallbackLocale;
+    }
+  }
+
   @override
-  Future<WidgetsLocalizations> load(Locale locale) {
+  Future<S> load(Locale locale) {
     final String lang = getLang(locale);
-    switch (lang) {
+    if (lang != null) {
+      switch (lang) {
 
 """
 
 private const val delegateClassEnd =
 """
-      default:
-        return new SynchronousFuture<WidgetsLocalizations>(const S());
+        default:
+          // NO-OP.
     }
+    return new SynchronousFuture<S>(const S());
   }
 
   @override
-  bool isSupported(Locale locale) => supportedLocales.contains(locale);
+  bool isSupported(Locale locale) => locale != null && supportedLocales.contains(locale);
 
   @override
   bool shouldReload(GeneratedLocalizationsDelegate old) => false;
 }
 
-String getLang(Locale l) => l.countryCode != null && l.countryCode.isEmpty
+String getLang(Locale l) => l == null
+  ? null
+  : l.countryCode != null && l.countryCode.isEmpty
     ? l.languageCode
     : l.toString();
 """
