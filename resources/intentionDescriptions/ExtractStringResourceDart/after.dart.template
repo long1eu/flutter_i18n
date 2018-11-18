@@ -1,0 +1,1 @@
+Widget text = new Text(S.of(context).this_is_another_strings);

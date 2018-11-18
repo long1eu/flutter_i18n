@@ -1,0 +1,1 @@
+String string = S.of(context).this_is_my_string;
