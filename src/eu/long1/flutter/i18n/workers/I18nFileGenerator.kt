@@ -130,8 +130,8 @@ class I18nFileGenerator(private val project: Project) {
         map.keys.forEach {
             //for hebrew iw=he
             if (it.startsWith("iw")) {
-                builder.append("        case \"iw_IL\":\n      case \"he_IL\":        return new SynchronousFuture<WidgetsLocalizations>(const he_IL());\n")
-            } else builder.append("        case \"$it\":\n        return new SynchronousFuture<WidgetsLocalizations>(const $it());\n")
+                builder.append("        case \"iw_IL\":\n      case \"he_IL\":        return new SynchronousFuture<S>(const he_IL());\n")
+            } else builder.append("        case \"$it\":\n        return new SynchronousFuture<S>(const $it());\n")
         }
 
         builder.append(delegateClassEnd)
@@ -280,7 +280,7 @@ class S implements WidgetsLocalizations {
 
 private const val delegateClassHeader =
 """
-class GeneratedLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
+class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
   const GeneratedLocalizationsDelegate();
 
   List<Locale> get supportedLocales {
@@ -326,7 +326,7 @@ private const val delegateClassResolution =
   }
 
   @override
-  Future<WidgetsLocalizations> load(Locale locale) {
+  Future<S> load(Locale locale) {
     final String lang = getLang(locale);
     if (lang != null) {
       switch (lang) {
@@ -338,7 +338,7 @@ private const val delegateClassEnd =
         default:
           // NO-OP.
     }
-    return new SynchronousFuture<WidgetsLocalizations>(const S());
+    return new SynchronousFuture<S>(const S());
   }
 
   @override
