@@ -96,7 +96,7 @@ class I18nFileGenerator(private val project: Project) {
         ids -= parametrized
 
 
-        builder.append("class $lang extends S {\n  const $lang();\n\n   " +
+        builder.append("class $lang extends S {\n  const $lang();\n\n  " +
                 "@override\n  TextDirection get textDirection => TextDirection.${if (rtl.contains(lang.split("_")[0])) "rtl" else "ltr"};\n\n")
 
         ids.forEach { appendStringMethod(it, langMap[it]!!, builder) }
@@ -271,8 +271,7 @@ class S implements WidgetsLocalizations {
   static const GeneratedLocalizationsDelegate delegate =
       const GeneratedLocalizationsDelegate();
 
-  static S of(BuildContext context) =>
-      Localizations.of<S>(context, WidgetsLocalizations);
+  static S of(BuildContext context) => Localizations.of<S>(context, S);
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
