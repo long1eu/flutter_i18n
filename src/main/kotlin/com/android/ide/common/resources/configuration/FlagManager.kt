@@ -109,16 +109,18 @@ private constructor() {
             }
 
             // Special cases where we have a dedicated flag available:
-            if (language == "ca") {        //$NON-NLS-1$
-                return getIcon("catalonia")      //$NON-NLS-1$
-            } else if (language == "gd") { //$NON-NLS-1$
-                return getIcon("scotland")     //$NON-NLS-1$
-            } else if (language == "cy") { //$NON-NLS-1$
-                return getIcon("wales")        //$NON-NLS-1$
+            when (language) {
+                "ca" -> //$NON-NLS-1$
+                    return getIcon("catalonia")      //$NON-NLS-1$
+                "gd" -> //$NON-NLS-1$
+                    return getIcon("scotland")     //$NON-NLS-1$
+                "cy" -> //$NON-NLS-1$
+                    return getIcon("wales")        //$NON-NLS-1$
+
+                // Pick based on various heuristics
+                else -> region = LocaleManager.getLanguageRegion(language!!)
             }
 
-            // Pick based on various heuristics
-            region = LocaleManager.getLanguageRegion(language!!)
         }
 
         return if (region == null || region.isEmpty() || region.length == 3) {
@@ -131,6 +133,7 @@ private constructor() {
     @Nullable
     private fun getIcon(base: String): Icon? {
         var flagImage: Icon? = myImageMap[base]
+
         if (flagImage == null) {
             // TODO: Special case locale currently running on system such
             // that the current country matches the current locale
@@ -138,12 +141,20 @@ private constructor() {
                 // Already checked: there's just no image there
                 return null
             }
-            val flagFileName = base.toLowerCase(java.util.Locale.US) + ".png" //$NON-NLS-1$
-            flagImage = IconLoader.findIcon("/icons/flags/" + flagFileName, FlutterI18nIcons::class.java)
-            if (flagImage == null) {
+            var flagFileName = base.toLowerCase(java.util.Locale.US) + ".png" //$NON-NLS-1$
+            if (flagFileName.startsWith("__")) {
+                flagFileName = "flag_empty.png"
+            }
+            try {
+                flagImage = IconLoader.findIcon("/icons/flags/$flagFileName", FlutterI18nIcons::class.java)
+                if (flagImage == null) {
+                    flagImage = FlutterI18nIcons.EmptyFlag
+                }
+            } catch (ignore: Exception) {
                 flagImage = FlutterI18nIcons.EmptyFlag
             }
-            myImageMap.put(base, flagImage)
+
+            myImageMap[base] = flagImage
         }
 
         return flagImage

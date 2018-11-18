@@ -34,4 +34,15 @@ intellij {
     ]
 }
 
-tasks.classes.dependsOn 'compileKotlin'
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+publishPlugin {
+    username = localProperties.getProperty('username')
+    password = localProperties.getProperty('password')
+}

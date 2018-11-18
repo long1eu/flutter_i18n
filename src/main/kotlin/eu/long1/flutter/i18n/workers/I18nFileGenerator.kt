@@ -2,6 +2,8 @@ package eu.long1.flutter.i18n.workers
 
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -53,8 +55,12 @@ class I18nFileGenerator(private val project: Project) {
         val document = documentManager.getDocument(dartFile)!!
 
         if (document.text != i18nFile) {
-            document.setText(i18nFile)
-            documentManager.commitDocument(document)
+            ApplicationManager.getApplication().invokeLater {
+                runWriteAction {
+                    document.setText(i18nFile)
+                    documentManager.commitDocument(document)
+                }
+            }
         }
     }
 

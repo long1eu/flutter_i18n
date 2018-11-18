@@ -3,6 +3,7 @@ package eu.long1.flutter.i18n.workers
 import com.intellij.json.psi.JsonElementGenerator
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -21,9 +22,10 @@ import eu.long1.flutter.i18n.Log
 import eu.long1.flutter.i18n.files.FileHelpers
 import eu.long1.flutter.i18n.items.MethodItem
 import io.flutter.utils.FlutterModuleUtils
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
+import java.util.*
 import java.util.regex.Pattern
+import kotlin.concurrent.scheduleAtFixedRate
+
 
 class Initializer : StartupActivity, DocumentListener {
 
@@ -44,8 +46,8 @@ class Initializer : StartupActivity, DocumentListener {
             valuesFolder = FileHelpers.getValuesFolder(project)
         }
 
-        Observable.interval(1, TimeUnit.SECONDS).forEach {
-            WriteCommandAction.runWriteCommandAction(project) {
+        Timer().scheduleAtFixedRate(0, 1000) {
+            runReadAction {
                 I18nFileGenerator(project).generate()
             }
         }

@@ -105,8 +105,8 @@ class DeviceConfiguratorPanel : JPanel(BorderLayout()) {
                 gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER
                 gridBagConstraints.anchor = GridBagConstraints.LINE_START
 
-                myLanguageList.addListSelectionListener({ updateRegionList(myLanguageList.selectedValue as String) })
-                myShowAllRegions!!.addChangeListener { updateRegionList(myLanguageList.selectedValue as String) }
+                myLanguageList.addListSelectionListener { updateRegionList(myLanguageList.selectedValue as String?) }
+                myShowAllRegions!!.addChangeListener { updateRegionList(myLanguageList.selectedValue as String?) }
 
                 return pane
             }
