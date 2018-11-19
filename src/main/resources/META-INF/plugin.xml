@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>FlutterI18n</id>
     <name>Flutter i18n</name>
-    <version>0.0.7+1</version>
+    <version>0.0.8+1</version>
     <vendor email="home@long1.eu">long1eu</vendor>
     <depends>com.intellij.modules.json</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -14,6 +14,12 @@
     </description>
 
     <change-notes><![CDATA[
+    <p><strong><span style="font-size: 18px;">0.0.8</span></strong></p>
+    <ul>
+    <li>escape dollar sign</li>
+    <li>plural keywords are now case insensitive</li>
+    </ul>
+
     <p><strong><span style="font-size: 18px;">0.0.7</span></strong></p>
     <ul>
     <li>handles null locales</li>

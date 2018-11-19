@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'eu.long1.flutter'
-version '0.0.7+1'
+version '0.0.8+1'
 
 repositories {
     mavenCentral()
@@ -45,5 +45,4 @@ if (localPropertiesFile.exists()) {
 publishPlugin {
     username = localProperties.getProperty('username')
     password = localProperties.getProperty('password')
-    channels 'nightly'
 }

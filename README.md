@@ -37,7 +37,14 @@ If you want to change the last step and to provided a default locale instead of 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      localizationsDelegates: [S.delegate],
+      localizationsDelegates: [
+            S.delegate,
+            // You need to add them if you are using the material library.
+            // The material components usses this delegates to provide default 
+            // localization 
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+      ],
       supportedLocales: S.delegate.supportedLocales,
       <b>localeResolutionCallback:
           S.delegate.resolution(fallback: const Locale('en', '')),</b>
