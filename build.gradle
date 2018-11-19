@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'eu.long1.flutter'
-version '0.0.8+1'
+version '0.1.3'
 
 repositories {
     mavenCentral()
