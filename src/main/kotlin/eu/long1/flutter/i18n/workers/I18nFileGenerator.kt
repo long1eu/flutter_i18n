@@ -161,41 +161,82 @@ class I18nFileGenerator(private val project: Project) {
     ) {
         PARAMETER_MATCHER.reset(value)
 
-        if (isOverride) builder.append("  @override\n")
-        builder.append("  String $id(")
+        if (isOverride) {
+            builder.append("  @override\n")
+        }
+
+        var hasItems = false
         while (PARAMETER_MATCHER.find()) {
+            if (!hasItems) {
+                builder.append("  String $id(")
+                hasItems = true
+            }
+
+            println(PARAMETER_MATCHER.group().substring(1))
+
             val parameter = PARAMETER_MATCHER.group().substring(1)
             builder.append("String $parameter, ")
         }
-        builder.setLength(builder.length - 2)
-        builder.append(") => \"$value\";\n")
+
+        if (hasItems) {
+            builder.setLength(builder.length - 2)
+            builder.append(")")
+        } else {
+            builder.append("  String get $id")
+        }
+
+        builder.append(" => \"$value\";\n")
     }
 
     internal fun appendPluralMethod(
         id: String, countsList: ArrayList<String>, valuesMap: HashMap<String, String>,
         builder: StringBuilder, isOverride: Boolean = true
     ) {
-        val zero = countsList.contains("Zero")
-        val one = countsList.contains("One")
-        val two = countsList.contains("Two")
-        val few = countsList.contains("Few")
-        val many = countsList.contains("Many")
+        val zero = countsList.contains("zero")
+        val one = countsList.contains("one")
+        val two = countsList.contains("two")
+        val few = countsList.contains("few")
+        val many = countsList.contains("many")
 
 
+        val otherValue = valuesMap["${id}Other"] ?: valuesMap["${id}other"] ?: return
         val parameterName: String = {
-            PARAMETER_MATCHER.reset(valuesMap["${id}Other"]!!).find()
+            PARAMETER_MATCHER.reset(otherValue).find()
             PARAMETER_MATCHER.group().substring(1)
         }()
 
-        if (isOverride) builder.append("  @override\n")
-        builder.append("  String $id(String $parameterName) {\n    switch ($parameterName) {\n")
+        if (isOverride) {
+            builder.append("  @override\n")
+        }
 
-        if (zero) builder.append("      case \"0\":\n        return \"${valuesMap["${id}Zero"]!!}\";\n")
-        if (one) builder.append("      case \"1\":\n        return \"${valuesMap["${id}One"]!!}\";\n")
-        if (two) builder.append("      case \"2\":\n        return \"${valuesMap["${id}Two"]!!}\";\n")
-        if (few) builder.append("      case \"few\":\n        return \"${valuesMap["${id}Few"]!!}\";\n")
-        if (many) builder.append("      case \"many\":\n        return \"${valuesMap["${id}Many"]!!}\";\n")
-        builder.append("      default:\n        return \"${valuesMap["${id}Other"]!!}\";\n    }\n  }\n")
+        val newId: String = if (id.endsWith("_")) id.dropLast(1) else id
+
+        builder.append(
+            "  String $newId(dynamic $parameterName) {\n    switch ($parameterName.toString()) {\n"
+        )
+
+        if (zero) {
+            val value = valuesMap["${id}Zero"] ?: valuesMap["${id}zero"]
+            builder.append("      case \"0\":\n        return \"$value\";\n")
+        }
+        if (one) {
+            val value = valuesMap["${id}One"] ?: valuesMap["${id}one"]
+            builder.append("      case \"1\":\n        return \"$value\";\n")
+        }
+        if (two) {
+            val value = valuesMap["${id}Two"] ?: valuesMap["${id}two"]
+            builder.append("      case \"2\":\n        return \"$value\";\n")
+        }
+        if (few) {
+            val value = valuesMap["${id}Few"] ?: valuesMap["${id}few"]
+            builder.append("      case \"few\":\n        return \"$value\";\n")
+        }
+        if (many) {
+            val value = valuesMap["${id}Many"] ?: valuesMap["${id}many"]
+            builder.append("      case \"many\":\n        return \"$value\";\n")
+        }
+
+        builder.append("      default:\n        return \"$otherValue\";\n    }\n  }\n")
     }
 
     fun getCountFromValue(text: String): String? = when (text) {
@@ -240,14 +281,14 @@ class I18nFileGenerator(private val project: Project) {
                 val id = PLURAL_MATCHER.group(1)
                 val quantity = PLURAL_MATCHER.group(2)
                 val list = map[id] ?: ArrayList()
-                list.add(quantity)
+                list.add(quantity.toLowerCase())
                 map[id] = list
             }
             find
         } as ArrayList
 
         HashMap(map).forEach { id, counts ->
-            if (counts.none { it == "Other" }) {
+            if (counts.none { it.contains("other", true) }) {
                 counts.forEach { count -> pluralIds.remove("$id$count") }
                 map.remove(id)
             }
@@ -268,9 +309,14 @@ class I18nFileGenerator(private val project: Project) {
     }
 
     companion object {
-        private val PLURAL_MATCHER = Pattern.compile("(.*)(Zero|One|Two|Few|Many|Other)").matcher("")
+        private val PLURAL_MATCHER =
+            Pattern.compile("(.*)(zero|one|two|few|many|other)", Pattern.CASE_INSENSITIVE)
+                .matcher("")
         private val PARAMETER_MATCHER =
-            Pattern.compile("\\$[^\\p{Punct}\\p{Space}\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}–]*").matcher("")
+            Pattern.compile(
+                "(?<!\\\\)\\$[^\\p{Punct}\\p{Space}\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}–]*"
+            )
+                .matcher("")
 
         // @formatter:off
         private const val i18nFileImports =

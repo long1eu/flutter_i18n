@@ -124,7 +124,7 @@ class Initializer : StartupActivity, DocumentListener {
                     is DartGetterDeclaration -> {
                         PLURAL_MATCHER.reset(method.name)
                         val isPlural = PLURAL_MATCHER.find()
-                        if (isPlural && PLURAL_MATCHER.group(2) != "Other") {
+                        if (isPlural && !PLURAL_MATCHER.group(2).endsWith("other", true)) {
                             val counts = arrayListOf(count)
                             counts.add(PLURAL_MATCHER.group(2))
 
@@ -158,9 +158,9 @@ class Initializer : StartupActivity, DocumentListener {
                         )!!
                         val defaultValue = getStringFromExpression(defaultExpression)
 
-                        if (count != "Other") {
-                            countsList.add("Other")
-                            valuesMap["${methodName}Other"] = defaultValue
+                        if (!count.equals("other", true)) {
+                            countsList.add("other")
+                            valuesMap["${methodName}other"] = defaultValue
                         }
 
                         generator.appendPluralMethod(methodName, countsList, valuesMap, builder, shouldOverride(clazz))
@@ -204,7 +204,7 @@ class Initializer : StartupActivity, DocumentListener {
                 when (method) {
                     is DartGetterDeclaration -> method = clazz.findMethodByName(id)
                     is DartMethodDeclaration -> {
-                        if (count == "Other") {
+                        if (count.equals("other", true)) {
                             val dartSwitch = PsiTreeUtil.findChildOfType(method, DartSwitchStatement::class.java)!!
 
                             dartSwitch.switchCaseList.forEach {
@@ -247,8 +247,8 @@ class Initializer : StartupActivity, DocumentListener {
                                 DartStringLiteralExpression::class.java
                             )!!
                             val defaultValue = getStringFromExpression(defaultExpression)
-                            countsList.add("Other")
-                            valuesMap["${methodName}Other"] = defaultValue
+                            countsList.add("other")
+                            valuesMap["${methodName}other"] = defaultValue
 
                             generator.appendPluralMethod(
                                 methodName,
@@ -271,7 +271,8 @@ class Initializer : StartupActivity, DocumentListener {
 
     companion object {
         private val log = Log()
-        private val PLURAL_MATCHER = Pattern.compile("(.*)(Zero|One|Two|Few|Many|Other)").matcher("")
+        private val PLURAL_MATCHER =
+            Pattern.compile("(.*)(zero|one|two|few|many|other)", Pattern.CASE_INSENSITIVE).matcher("")
 
         fun getStringFromExpression(expression: PsiElement?): String = expression?.text?.drop(1)?.dropLast(1) ?: ""
     }
