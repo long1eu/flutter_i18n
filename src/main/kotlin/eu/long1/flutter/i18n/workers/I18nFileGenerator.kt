@@ -149,7 +149,9 @@ class I18nFileGenerator(private val project: Project) {
 
 
     internal fun appendStringMethod(id: String, value: String, builder: StringBuilder, isOverride: Boolean = true) {
-        if (isOverride) builder.append("  @override\n")
+        if (isOverride) {
+            builder.append("  @override\n")
+        }
         builder.append("  String get $id => \"$value\";\n")
     }
 
@@ -171,8 +173,6 @@ class I18nFileGenerator(private val project: Project) {
                 builder.append("  String $id(")
                 hasItems = true
             }
-
-            println(PARAMETER_MATCHER.group().substring(1))
 
             val parameter = PARAMETER_MATCHER.group().substring(1)
             builder.append("String $parameter, ")
@@ -274,17 +274,17 @@ class I18nFileGenerator(private val project: Project) {
      */
     private fun findPluralsIds(ids: ArrayList<String>, pluralsMaps: HashMap<String, ArrayList<String>>): List<String> {
         val map = HashMap<String, ArrayList<String>>()
-        val pluralIds = ids.filter {
-            PLURAL_MATCHER.reset(it)
-            val find = PLURAL_MATCHER.find()
-            if (find) {
-                val id = PLURAL_MATCHER.group(1)
-                val quantity = PLURAL_MATCHER.group(2)
+        val pluralIds = ids.filter { value ->
+            val isPlural = pluralEnding.any { value.endsWith(it, ignoreCase = true) }
+            if (isPlural) {
+                val quantity = pluralEnding.first { value.endsWith(it, ignoreCase = true) }
+                val id = value.substring(0, value.length - quantity.length)
                 val list = map[id] ?: ArrayList()
                 list.add(quantity.toLowerCase())
                 map[id] = list
             }
-            find
+
+            isPlural
         } as ArrayList
 
         HashMap(map).forEach { id, counts ->
@@ -309,9 +309,6 @@ class I18nFileGenerator(private val project: Project) {
     }
 
     companion object {
-        private val PLURAL_MATCHER =
-            Pattern.compile("(.*)(zero|one|two|few|many|other)", Pattern.CASE_INSENSITIVE)
-                .matcher("")
         private val PARAMETER_MATCHER =
             Pattern.compile(
                 "(?<!\\\\)\\$[^\\p{Punct}\\p{Space}\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}–]*"
@@ -416,5 +413,7 @@ String getLang(Locale l) => l == null
 // @formatter:on
 
         private val rtl: Set<String> = setOf("ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi")
+        private val pluralEnding: ArrayList<String> =
+            arrayListOf("zero", "one", "two", "few", "many", "other")
     }
 }
