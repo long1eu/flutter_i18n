@@ -16,7 +16,6 @@ import eu.long1.flutter.i18n.arb.ArbFileType
 import eu.long1.flutter.i18n.files.FileHelpers
 import java.util.regex.Pattern
 
-
 class I18nFileGenerator(private val project: Project) {
 
     private val psiManager = PsiManager.getInstance(project)
@@ -103,8 +102,11 @@ class I18nFileGenerator(private val project: Project) {
 
 
         builder.append(
-            "class $lang extends S {\n  const $lang();\n\n  " +
-                    "@override\n  TextDirection get textDirection => TextDirection.${if (rtl.contains(lang.split("_")[0])) "rtl" else "ltr"};\n\n"
+            "class $lang extends S {\n" +
+            "  const $lang();\n\n" +
+
+            "  @override\n" +
+            "  TextDirection get textDirection => TextDirection.${if (rtl.contains(lang.split("_")[0])) "rtl" else "ltr"};\n\n"
         )
 
         ids.forEach { appendStringMethod(it, langMap[it]!!, builder) }
@@ -116,8 +118,12 @@ class I18nFileGenerator(private val project: Project) {
         //for hebrew iw=he
         if (lang.startsWith("iw")) {
             builder.append(
-                "class he_IL extends $lang {\n const he_IL();\n\n   " +
-                        "@override\n  TextDirection get textDirection => TextDirection.rtl;\n\n}"
+                "class he_IL extends $lang {\n" +
+                "  const he_IL();\n\n" +
+
+                "  @override\n" +
+                "  TextDirection get textDirection => TextDirection.rtl;\n" +
+                "}"
             )
         }
     }
@@ -140,8 +146,17 @@ class I18nFileGenerator(private val project: Project) {
         map.keys.forEach {
             //for hebrew iw=he
             if (it.startsWith("iw")) {
-                builder.append("        case \"iw_IL\":\n      case \"he_IL\":\n          return SynchronousFuture<S>(const he_IL());\n")
-            } else builder.append("        case \"$it\":\n          return SynchronousFuture<S>(const $it());\n")
+                builder.append(
+                    "        case \"iw_IL\":\n" +
+                    "        case \"he_IL\":\n" +
+                    "          return SynchronousFuture<S>(const he_IL());\n"
+                )
+            } else {
+                builder.append(
+                    "        case \"$it\":\n" +
+                    "          return SynchronousFuture<S>(const $it());\n"
+                )
+            }
         }
 
         builder.append(delegateClassEnd)
@@ -174,7 +189,7 @@ class I18nFileGenerator(private val project: Project) {
                 hasItems = true
             }
 
-            val parameter = PARAMETER_MATCHER.group().substring(1)
+            val parameter = normalizeParameter(PARAMETER_MATCHER.group())
             builder.append("String $parameter, ")
         }
 
@@ -202,7 +217,7 @@ class I18nFileGenerator(private val project: Project) {
         val otherValue = valuesMap["${id}Other"] ?: valuesMap["${id}other"] ?: return
         val parameterName: String = {
             PARAMETER_MATCHER.reset(otherValue).find()
-            PARAMETER_MATCHER.group().substring(1)
+            normalizeParameter(PARAMETER_MATCHER.group())
         }()
 
         if (isOverride) {
@@ -246,6 +261,20 @@ class I18nFileGenerator(private val project: Project) {
         "few" -> "Few"
         "many" -> "Many"
         else -> throw IllegalArgumentException("This value $text is not valid.")
+    }
+
+    private fun normalizeParameter(parameter: String): String {
+        var normalized = parameter
+
+        // Trim starting dollar sign if found.
+        if (normalized.startsWith('$')) {
+            normalized = normalized.substring(1)
+        }
+
+        // Trim possible surrounding curly parentheses used in Flutter.
+        normalized = normalized.trim('{', '}')
+
+        return normalized
     }
 
     /**
@@ -311,13 +340,18 @@ class I18nFileGenerator(private val project: Project) {
     companion object {
         private val PARAMETER_MATCHER =
             Pattern.compile(
-                "(?<!\\\\)\\$[^\\p{Punct}\\p{Space}\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}–]*"
+                "(?<!\\\\)\\$\\{?[^}\\p{Punct}\\p{Space}\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}–]*}?"
             )
-                .matcher("")
+            .matcher("")
 
         // @formatter:off
         private const val i18nFileImports =
-            """import 'dart:async';
+            """/////////////////////////////////////////////////////////////
+// AUTO-GENERATED FILE – YOUR CHANGES WILL BE OVERWRITTEN! //
+// PLUGIN WEBSITE: https://github.com/long1eu/flutter_i18n //
+/////////////////////////////////////////////////////////////
+
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -335,6 +369,7 @@ import 'package:flutter/material.dart';
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
+
 """
 
         private const val delegateClassHeader =
@@ -390,7 +425,7 @@ import 'package:flutter/material.dart';
 
         private const val delegateClassEnd =
             """        default:
-        // NO-OP.
+          // NO-OP.
       }
     }
     return SynchronousFuture<S>(const S());
