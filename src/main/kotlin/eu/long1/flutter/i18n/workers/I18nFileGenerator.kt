@@ -263,19 +263,10 @@ class I18nFileGenerator(private val project: Project) {
         else -> throw IllegalArgumentException("This value $text is not valid.")
     }
 
-    private fun normalizeParameter(parameter: String): String {
-        var normalized = parameter
-
-        // Trim starting dollar sign if found.
-        if (normalized.startsWith('$')) {
-            normalized = normalized.substring(1)
-        }
-
-        // Trim possible surrounding curly parentheses used in Flutter.
-        normalized = normalized.trim('{', '}')
-
-        return normalized
-    }
+    /**
+     * Trim possible surrounding curly parentheses used in Flutter, in addition to the dollar sign used by parameters.
+     */
+    private fun normalizeParameter(parameter: String): String = parameter.trim('$', '{', '}')
 
     /**
      * Create a file in the values folder for the given language.
