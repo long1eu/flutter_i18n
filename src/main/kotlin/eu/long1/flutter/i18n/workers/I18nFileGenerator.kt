@@ -353,7 +353,7 @@ import 'package:flutter/material.dart';
   const S();
 
   static const GeneratedLocalizationsDelegate delegate =
-      GeneratedLocalizationsDelegate();
+    GeneratedLocalizationsDelegate();
 
   static S of(BuildContext context) => Localizations.of<S>(context, S);
 
@@ -423,17 +423,17 @@ import 'package:flutter/material.dart';
 
   @override
   bool isSupported(Locale locale) =>
-      locale != null && supportedLocales.contains(locale);
+    locale != null && supportedLocales.contains(locale);
 
   @override
   bool shouldReload(GeneratedLocalizationsDelegate old) => false;
 }
 
 String getLang(Locale l) => l == null
-    ? null
-    : l.countryCode != null && l.countryCode.isEmpty
-        ? l.languageCode
-        : l.toString();
+  ? null
+  : l.countryCode != null && l.countryCode.isEmpty
+    ? l.languageCode
+    : l.toString();
 """
 // @formatter:on
 
