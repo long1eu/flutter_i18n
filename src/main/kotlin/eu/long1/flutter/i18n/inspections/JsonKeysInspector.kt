@@ -7,7 +7,6 @@ import com.intellij.codeInspection.ex.BaseLocalInspectionTool
 import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import eu.long1.flutter.i18n.arb.ArbFileType
 
 class JsonKeysInspector : BaseLocalInspectionTool() {
@@ -15,23 +14,26 @@ class JsonKeysInspector : BaseLocalInspectionTool() {
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (!isOnTheFly) return null
         if (file.fileType == ArbFileType) {
-            return PsiTreeUtil.findChildrenOfType(file, JsonProperty::class.java).mapNotNull {
-                val key = (it.nameElement as JsonStringLiteral).value
-                if (!keyPattern.containsMatchIn(key)) {
-                    manager.createProblemDescriptor(
-                        it.nameElement,
-                        displayName,
-                        isOnTheFly,
-                        null,
-                        ProblemHighlightType.GENERIC_ERROR
-                    )
-                } else null
-            }.toTypedArray()
+            return file.children.first().children.filterIsInstance<JsonProperty>()
+                .filter { !it.name.startsWith("@") }
+                .mapNotNull {
+                    val key = (it.nameElement as JsonStringLiteral).value
+
+                    if (!key.startsWith('@') && !keyPattern.containsMatchIn(key)) {
+                        manager.createProblemDescriptor(
+                            it.nameElement,
+                            displayName,
+                            isOnTheFly,
+                            null,
+                            ProblemHighlightType.GENERIC_ERROR
+                        )
+                    } else null
+                }.toTypedArray()
         }
         return null
     }
 
-    override fun getDisplayName(): String = "The string key must be a valid Dart field name."
+    override fun getDisplayName(): String = "The string key can start with a letter or underscore (_), followed by any combination of those characters plus digits."
 
     override fun getGroupDisplayName(): String = "Flutter I18n"
 
