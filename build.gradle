@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'eu.long1.flutter'
-version '0.1.4'
+version '0.1.1'
 
 repositories {
     mavenCentral()
@@ -25,11 +25,11 @@ compileTestKotlin {
 }
 
 intellij {
-    version '2018.3'
+    version '181.5540.7'
     pluginName 'Flutter i18n'
     plugins = [
-            "Dart:183.4284.122",
-            "io.flutter:30.0.3",
+            "Dart:181.3263.21",
+            "io.flutter:30.0.1",
             "yaml"
     ]
 }
