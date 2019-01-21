@@ -1,5 +1,7 @@
-*.zip
-*.jar
+.gradle/
+build/
+.idea/
+*.iml
 dep/
 extras/
-out/
+local.properties

@@ -1,0 +1,48 @@
+plugins {
+    id 'org.jetbrains.intellij' version '0.3.12'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.10'
+}
+
+group 'eu.long1.flutter'
+version '0.2.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.3.10'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+intellij {
+    version '181.5540.7'
+    pluginName 'Flutter i18n'
+    plugins = [
+            "Dart:181.3263.21",
+            "io.flutter:30.0.1",
+            "yaml"
+    ]
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+publishPlugin {
+    username = localProperties.getProperty('username')
+    password = localProperties.getProperty('password')
+}

@@ -12,8 +12,16 @@ This plugin helps you internationalize you Flutter app by generating be needed b
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      <b>localizationsDelegates: [S.delegate],</b>
-      <b>supportedLocales: S.delegate.supportedLocales,</b>
+      onGenerateTitle: (BuildContext context) => S.of(context).app_name,
+      <b>localizationsDelegates: const <LocalizationsDelegate<WidgetsLocalizations>>[
+            S.delegate,
+            // You need to add them if you are using the material library.
+            // The material components usses this delegates to provide default 
+            // localization      
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,               
+      ],
+      supportedLocales: S.delegate.supportedLocales,</b>      
       title: 'Flutter Demo',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
@@ -34,9 +42,20 @@ If you want to change the last step and to provided a default locale instead of 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      localizationsDelegates: [S.delegate],
+      localizationsDelegates: [
+            S.delegate,
+            // You need to add them if you are using the material library.
+            // The material components usses this delegates to provide default 
+            // localization 
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+      ],
       supportedLocales: S.delegate.supportedLocales,
-      <b>localeResolutionCallback: S.delegate.resolution(fallback: new Locale("en", "")),</b>
+      <b>localeResolutionCallback:
+          S.delegate.resolution(fallback: const Locale('en', '')),</b>
+      // or
+      <b>localeListResolutionCallback:
+          S.delegate.listResolution(fallback: const Locale('en', '')),</b>    
       title: 'Flutter Demo',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
@@ -55,8 +74,6 @@ ARB files extension stands for [Application Resource Bundle](https://github.com/
 Flutter internalization only depends on a small subset of the ARB format. Each .arb file contains a single JSON table that maps from resource IDs to localized values. Filenames contain the locale that the values have been translated for. For example material_de.arb contains German translations, and material_ar.arb contains Arabic translations. Files that contain regional translations have names that include the locale's regional suffix. For example material_en_GB.arb contains additional English translations that are specific to Great Britain.
 
 <b>The first English file is generated for you(/res/values/strings_en.arb).</b> Every arb file depends on this one. If you have an a string in the German arb file(/res/values/strings_de.arb) that has an ID that is <b>not found</b> in the English file, it would not be listed. So you must be sure to first have the strings in the English file and then add other translations.
-
-Do not add white spaces or illegal characters in your IDs. They should match this RegEx <b>[a-zA-Z]</b> <span style="color: rgb(0, 0, 0); font-family: &quot;Source Sans Pro&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">for now</span>. The IDE doesn't worn you if your ID doesn't match.
 
 To add a new arb file right click on <b>values</b> folder and select <b>New</b> -><b> Arb </b><b>File</b>. Then pick your language from the list, and region if necessary.
 
@@ -86,7 +103,7 @@ The value for this resource ID is retrieved with a parametrized method instead o
 
 #### 3. Plurals
 
-Plural translations can be provided for several quantities: 0, 1, 2, "few", "many", "other". The variations are identified by a resource ID suffix which must be one of "Zero", "One", "Two", "Few", "Many", "Other". The "Other" variation is used when none of the other quantities apply. All plural resources must include a resource with the "Other" suffix. For example the English translations ('material_en.arb') for selectedRowCountTitle in the [Material Library Localizations](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations/lib/src/l10n) are:
+Plural translations can be provided for several quantities: 0, 1, 2, "few", "many", "other". The variations are identified by a resource ID suffix which must be one of "Zero", "One", "Two", "Few", "Many", "Other" (case insensitive). The "Other" variation is used when none of the other quantities apply. All plural resources must include a resource with the "Other" suffix. For example the English translations ('material_en.arb') for selectedRowCountTitle in the [Material Library Localizations](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations/lib/src/l10n) are:
 
     {
         "selectedRowCountTitleZero": "No items selected",
@@ -107,6 +124,24 @@ or
 
 <pre>S.of(context).selectedRowCountTitle("$selectedRowCount")</pre>
 
+### NOTES:
+* The plugin also supports `${variable}` notation. Use this when the parser does not catch the parameters properly. For example:
+    ```json
+    {"tabLabel": "탭 $tabCount개 중 $tabIndex번째"}
+    ```
+    will generate 
+    ```dart
+    String tabLabel(String tabCount개, String tabIndex번째) => "탭 $tabCount개 중 $tabIndex번째";
+    ```
+    Witch contains invalid Dart fields. In this case you should use 
+    ```json
+    {"tabLabel": "탭 ${tabCount}개 중 ${tabIndex}번째"}
+    ```
+
+* Also you can escape the `$` sign with `\` 
+    ```json
+    {"checkout_message": "You have to pay \$$price"}
+    ```
 # Issues
 
 There are some performance improvements and bug fixes that this plugin could use, so feel free to PR.
