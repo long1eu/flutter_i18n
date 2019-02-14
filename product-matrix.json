@@ -1,0 +1,36 @@
+{
+  "list": [
+    {
+      "comments": "2018.1",
+      "ideaVersion": "181.5540.23",
+      "dartPluginVersion": "181.4445.29",
+      "flutterPluginVersion": "31.3.1",
+      "sinceBuild": "181.5540.23",
+      "untilBuild": "181.*"
+    },
+    {
+      "comments": "2018.2",
+      "ideaVersion": "182.5107.41",
+      "dartPluginVersion": "182.5124",
+      "flutterPluginVersion": "32.0.2",
+      "sinceBuild": "182.5107.7",
+      "untilBuild": "182.*"
+    },
+    {
+      "comments": "2018.3",
+      "ideaVersion": "183.5153.38",
+      "dartPluginVersion": "183.5901",
+      "flutterPluginVersion": "32.0.3",
+      "sinceBuild": "183.5153.38.34.*",
+      "untilBuild": "183.*"
+    },
+    {
+      "comments": "2019.1",
+      "ideaVersion": "191.4738.6",
+      "dartPluginVersion": "191.4738.6",
+      "flutterPluginVersion": "32.0.3",
+      "sinceBuild": "191.0",
+      "untilBuild": "191.*"
+    }
+  ]
+}

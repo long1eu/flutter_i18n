@@ -18,8 +18,7 @@ class JsonKeysInspector : BaseLocalInspectionTool() {
                 .filter { !it.name.startsWith("@") }
                 .mapNotNull {
                     val key = (it.nameElement as JsonStringLiteral).value
-
-                    if (!key.startsWith('@') && !keyPattern.containsMatchIn(key)) {
+                    if (!keyPattern.containsMatchIn(key)) {
                         manager.createProblemDescriptor(
                             it.nameElement,
                             displayName,

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'eu.long1.flutter'
-version '0.2.1'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -24,12 +24,18 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+patchPluginXml {
+    version '1.0.3'
+    sinceBuild '181.5540.23'
+    untilBuild '181.*'
+}
+
 intellij {
-    version '181.5540.7'
     pluginName 'Flutter i18n'
+    version '181.5540.23'
     plugins = [
-            "Dart:181.3263.21",
-            "io.flutter:30.0.1",
+            "Dart:181.4445.29",
+            "io.flutter:31.3.1",
             "yaml"
     ]
 }
@@ -41,6 +47,7 @@ if (localPropertiesFile.exists()) {
         localProperties.load(reader)
     }
 }
+
 
 publishPlugin {
     username = localProperties.getProperty('username')

@@ -66,7 +66,7 @@ class I18nFileGenerator(private val project: Project) {
     }
 
     private fun stringFiles(): ArrayList<VirtualFile> = valuesFolder.children.filter {
-        it.extension == ArbFileType.defaultExtension && it.name.startsWith("strings_", true)
+        it.extension == ArbFileType.defaultExtension && it.name.startsWith("strings_", ignoreCase = true)
     } as ArrayList
 
     private fun appendSClass(en: HashMap<String, String>, builder: StringBuilder) {

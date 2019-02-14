@@ -13,7 +13,7 @@ This plugin helps you internationalize you Flutter app by generating be needed b
   Widget build(BuildContext context) {
     return new MaterialApp(
       onGenerateTitle: (BuildContext context) => S.of(context).app_name,
-      <b>localizationsDelegates: const <LocalizationsDelegate<WidgetsLocalizations>>[
+      <b>localizationsDelegates: const </**/LocalizationsDelegate</**/WidgetsLocalizations>>[
             S.delegate,
             // You need to add them if you are using the material library.
             // The material components usses this delegates to provide default 
