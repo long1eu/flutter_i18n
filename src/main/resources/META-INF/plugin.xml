@@ -84,7 +84,7 @@
     </change-notes>
 
 
-    <idea-version since-build="181" until-build="181.*"/>
+    <idea-version since-build="181" until-build="183.*"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="eu.long1.flutter.i18n.workers.Initializer"/>
