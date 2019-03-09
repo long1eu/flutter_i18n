@@ -146,9 +146,9 @@ class I18nFileGenerator(private val project: Project) {
 
             //for hebrew iw=he
             if (it.startsWith("iw")) {
-                builder.append("        case \"iw_IL\":\n      case \"he_IL\":\n          return SynchronousFuture<S>(const \$he_IL());\n")
+                builder.append("        case \"iw_IL\":\n      case \"he_IL\":\n          S.current = const \$he_IL();\nreturn SynchronousFuture<S>(S.current);\n")
             } else {
-                builder.append("        case \"$it\":\n          return SynchronousFuture<S>(const \$$it());\n")
+                builder.append("        case \"$it\":\n          S.current = const \$$it();\n          return SynchronousFuture<S>(S.current);\n")
             }
         }
 
@@ -346,6 +346,8 @@ import 'package:flutter/material.dart';
             """class S implements WidgetsLocalizations {
   const S();
 
+  static S current;
+
   static const GeneratedLocalizationsDelegate delegate =
     GeneratedLocalizationsDelegate();
 
@@ -396,7 +398,8 @@ import 'package:flutter/material.dart';
           // NO-OP.
       }
     }
-    return SynchronousFuture<S>(const S());
+    S.current = const S();
+    return SynchronousFuture<S>(S.current);
   }
 
   @override
