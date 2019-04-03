@@ -142,11 +142,9 @@ class I18nFileGenerator(private val project: Project) {
 
         builder.append(delegateClassResolution)
         map.keys.forEach {
-
-
-            //for hebrew iw=he
+            // for hebrew iw=he.
             if (it.startsWith("iw")) {
-                builder.append("        case \"iw_IL\":\n      case \"he_IL\":\n          S.current = const \$he_IL();\nreturn SynchronousFuture<S>(S.current);\n")
+                builder.append("        case \"iw_IL\":\n        case \"he_IL\":\n          S.current = const \$he_IL();\n          return SynchronousFuture<S>(S.current);\n")
             } else {
                 builder.append("        case \"$it\":\n          S.current = const \$$it();\n          return SynchronousFuture<S>(S.current);\n")
             }
