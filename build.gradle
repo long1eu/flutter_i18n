@@ -1,10 +1,12 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id 'org.jetbrains.intellij' version '0.3.12'
     id 'org.jetbrains.kotlin.jvm' version '1.3.10'
 }
 
 group 'eu.long1.flutter'
-version '1.0'
+version pluginVersion
 
 repositories {
     mavenCentral()
@@ -25,21 +27,18 @@ compileTestKotlin {
 }
 
 patchPluginXml {
-    version '1.0.3'
+    version pluginVersion
     sinceBuild '181.5540.23'
-    untilBuild '181.*'
+    untilBuild '191.*'
 }
 
 intellij {
     pluginName 'Flutter i18n'
-    version '181.5540.23'
-    plugins = [
-            "Dart:181.4445.29",
-            "io.flutter:31.3.1",
-            "yaml"
-    ]
+    version ideaVersion
+    plugins = ['yaml']
 }
 
+// Read local.properties file.
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -48,7 +47,27 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+// JSON parser instance.
+def json = new JsonSlurper()
 
+// Determine which branch we're building for.
+def ideaBranch = ideaVersion.substring(0, ideaVersion.indexOf('.'))
+
+// Parse Dart version needed for this branch.
+def dartVersionsMap = json.parseText(dartVersions)
+def dartVersion = dartVersionsMap[ideaBranch]
+if (dartVersion != null) {
+    intellij.plugins += "Dart:$dartVersion"
+}
+
+// Parse Flutter version needed for this branch.
+def flutterVersionsMap = json.parseText(flutterVersions)
+def flutterVersion = flutterVersionsMap[ideaBranch]
+if (flutterVersion != null) {
+    intellij.plugins += "io.flutter:$flutterVersion"
+}
+
+// Publishing credentials to JetBrains.
 publishPlugin {
     username = localProperties.getProperty('username')
     password = localProperties.getProperty('password')
