@@ -51,7 +51,21 @@ if (localPropertiesFile.exists()) {
 def json = new JsonSlurper()
 
 // Determine which branch we're building for.
-def ideaBranch = ideaVersion.substring(0, ideaVersion.indexOf('.'))
+def ideaBranch
+if (ideaVersion == "IC-2019.1") {
+    ideaBranch="191"
+} else if (ideaVersion == "IC-2018.3") {
+    ideaBranch="183"
+} else if (ideaVersion == "IC-2018.2") {
+    ideaBranch="182"
+} else {
+    ideaBranch="181"
+}
+
+System.out.println("\n")
+System.out.println("***************************************************")
+System.out.println("Building plugin for IntelliJ IDEA version $ideaVersion")
+System.out.println("***************************************************")
 
 // Parse Dart version needed for this branch.
 def dartVersionsMap = json.parseText(dartVersions)
