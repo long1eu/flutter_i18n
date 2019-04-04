@@ -11,8 +11,8 @@
   "182.5107.41": {
     "comments": "2018.2",
     "ideaVersion": "182.5107.41",
-    "dartPluginVersion": "182.5124",
-    "flutterPluginVersion": "32.0.2",
+    "dartPluginVersion": "182.5215",
+    "flutterPluginVersion": "33.4.1",
     "sinceBuild": "182.5107.7",
     "untilBuild": "182.*"
   },
