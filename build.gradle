@@ -1,6 +1,6 @@
 plugins {
-    id 'org.jetbrains.intellij' version '0.3.12'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.10'
+    id 'org.jetbrains.intellij' version '0.4.7'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
 }
 
 group 'eu.long1.flutter'
@@ -16,6 +16,15 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.3.10'
 }
 
+// Read local.properties file.
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
@@ -26,50 +35,62 @@ compileTestKotlin {
 
 patchPluginXml {
     version pluginVersion
-    sinceBuild '181.5540.23'
-    untilBuild '181.*'
-}
-
-intellij {
-    pluginName 'Flutter i18n'
-    version ideaVersion
-    plugins = ['yaml']
-}
-
-// Read local.properties file.
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
 }
 
 // Publishing credentials to JetBrains.
 publishPlugin {
+    // Preferred way to push plugins to JetBrains.
+    token = localProperties.getProperty('token')
+
+    // If you really must...
     username = localProperties.getProperty('username')
     password = localProperties.getProperty('password')
 }
 
+// IntelliJ base plugin configuration. The rest of the configuration is dynamic.
+intellij {
+    pluginName 'Flutter i18n'
+    plugins = ['yaml']
+}
+
 // Load product matrix.
 def productMatrixFile = 'product-matrix.json'
-def jsonFile = file(productMatrixFile)
-def productMatrix = new groovy.json.JsonSlurper().parseText(jsonFile.text)
+def jsonFile = new File(productMatrixFile)
+if (jsonFile == null) {
+    // noinspection GroovyAssignabilityCheck
+    throw new GradleException("Unable to read $productMatrixFile, is it missing?")
+}
 
 // Fail if the product details file isn't found.
+// noinspection UnnecessaryQualifiedReference
+def productMatrix = new groovy.json.JsonSlurper().parseText(jsonFile.text)
 if (productMatrix == null || !(productMatrix instanceof Map)) {
-    throw new IOException("Unable to read $productMatrixFile.")
+    // noinspection GroovyAssignabilityCheck
+    throw new GradleException("Unable to read $productMatrixFile.")
+}
+
+// If an ideaVersionPrefix is provided, search for the first matched product and use that.
+if (ideaVersionPrefix != '') {
+    def productMatrixKeys = productMatrix.keySet() as String[]
+    for (productMatrixKey in productMatrixKeys) {
+        if (productMatrixKey != null && productMatrixKey.startsWith("${ideaVersionPrefix}.")) {
+            ideaVersion = productMatrixKey
+            break
+        }
+    }
 }
 
 // Fail if requested version is unsupported.
 if (!productMatrix.containsKey(ideaVersion)) {
-    throw new IllegalStateException("Requested IDEA version is unsupported: $ideaVersion")
+    // noinspection GroovyAssignabilityCheck
+    throw new GradleException("Requested IDEA version is unsupported: $ideaVersion")
 }
 
 // Determine which branch we're building for.
 def productDetails = productMatrix[ideaVersion]
 if (productDetails == null || !(productDetails instanceof Map)) {
-    throw new RuntimeException("Product details for IDEA version $ideaVersion is missing or invalid.")
+    // noinspection GroovyAssignabilityCheck
+    throw new GradleException("Product details for IDEA version $ideaVersion is missing or invalid.")
 }
 
 // Adjust plugin's output file name.
@@ -83,6 +104,7 @@ System.out.println("Flutter: ${productDetails.flutterPluginVersion}\n")
 System.out.println("Artifacts output directory: ${rootProject.buildDir}\n")
 
 // Adjust plugin build settings.
+intellij.version = ideaVersion
 intellij.plugins += "Dart:${productDetails.dartPluginVersion}"
 intellij.plugins += "io.flutter:${productDetails.flutterPluginVersion}"
 patchPluginXml.sinceBuild = productDetails.sinceBuild
