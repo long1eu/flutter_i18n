@@ -45,6 +45,12 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+// Publishing credentials to JetBrains.
+publishPlugin {
+    username = localProperties.getProperty('username')
+    password = localProperties.getProperty('password')
+}
+
 // Load product matrix.
 def productMatrixFile = 'product-matrix.json'
 def jsonFile = file(productMatrixFile)
@@ -81,9 +87,3 @@ intellij.plugins += "Dart:${productDetails.dartPluginVersion}"
 intellij.plugins += "io.flutter:${productDetails.flutterPluginVersion}"
 patchPluginXml.sinceBuild = productDetails.sinceBuild
 patchPluginXml.untilBuild = productDetails.untilBuild
-
-// Publishing credentials to JetBrains.
-publishPlugin {
-    username = localProperties.getProperty('username')
-    password = localProperties.getProperty('password')
-}
