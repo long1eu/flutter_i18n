@@ -1,12 +1,12 @@
 # Synopsis
 
-This plugin helps you internationalize you Flutter app by generating be needed boiler plate code. You just add and organize strings in files that are contained in the /res/values folder. This plugin is based on the [Internationalizing Flutter Apps](https://flutter.io/tutorials/internationalization/) tutorial and on the [Material Library Localizations](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations/lib/src/l10n) package. Much of the instructions are taken from there.
+This plugin helps you internationalize you Flutter app by generating the needed boiler plate code. You just add and organize strings in files that are contained in the /res/values folder. This plugin is based on the [Internationalizing Flutter Apps](https://flutter.io/tutorials/internationalization/) tutorial and on the [Material Library Localizations](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations/lib/src/l10n) package. Much of the instructions are taken from there.
 
 # Usage
 
 ### 1. Setup you App
 
- Setup your localizationsDelegates and your supportedLocales witch will allow to access the strings.
+ Setup your localizationsDelegates and your supportedLocales which allows the access to the internationalized strings.
 
 <pre style="margin-left: 80px;">class MyApp extends StatelessWidget {
   @override
@@ -31,7 +31,7 @@ This plugin helps you internationalize you Flutter app by generating be needed b
   }
 }</pre>
 
-Optionally you can provide a fallback Locale for the unsupported languages. In case that the user changes the device language to an unsupported language the default resolution is:
+Optionally, you can provide a fallback Locale for the unsupported languages in case the user changes the device language to an unsupported language. The default resolution is:
 
 1.  The first supported locale with the same Locale.languageCode.
 2.  The first supported locale.
@@ -69,11 +69,11 @@ If you want to change the last step and to provided a default locale instead of 
 
 ### 2.  Setup the arb files. 
 
-ARB files extension stands for [Application Resource Bundle](https://github.com/googlei18n/app-resource-bundle) and is used by the Dart [intl](https://pub.dartlang.org/packages/intl) package, it is supported by the [Google Translators Toolkit](https://translate.google.com/toolkit) and it's supported by Google.
+ARB files extension stands for [Application Resource Bundle](https://github.com/googlei18n/app-resource-bundle) which is used by the Dart [intl](https://pub.dartlang.org/packages/intl) package. ARB files are supported by the [Google Translators Toolkit](https://translate.google.com/toolkit), thus supported by Google.
 
-Flutter internalization only depends on a small subset of the ARB format. Each .arb file contains a single JSON table that maps from resource IDs to localized values. Filenames contain the locale that the values have been translated for. For example material_de.arb contains German translations, and material_ar.arb contains Arabic translations. Files that contain regional translations have names that include the locale's regional suffix. For example material_en_GB.arb contains additional English translations that are specific to Great Britain.
+Flutter internalization only depends on a small subset of the ARB format. Each .arb file contains a single JSON table that maps from resource IDs to localized values. Filenames contain the locale that the values have been translated for. For example, material_de.arb contains German translations, and material_ar.arb contains Arabic translations. Files that contain regional translations have names that include the locale's regional suffix. For example, material_en_GB.arb contains additional English translations that are specific to Great Britain.
 
-<b>The first English file is generated for you(/res/values/strings_en.arb).</b> Every arb file depends on this one. If you have an a string in the German arb file(/res/values/strings_de.arb) that has an ID that is <b>not found</b> in the English file, it would not be listed. So you must be sure to first have the strings in the English file and then add other translations.
+<b>The first English file is generated for you(/res/values/strings_en.arb).</b> Every arb file depends on this one. If you have a string in the German arb file(/res/values/strings_de.arb) that has an ID which is <b>not found</b> in the English file, it would not be listed. So you must be sure to first have the strings in the English file and then add other translations.
 
 To add a new arb file right click on <b>values</b> folder and select <b>New</b> -><b> Arb </b><b>File</b>. Then pick your language from the list, and region if necessary.
 
@@ -89,15 +89,15 @@ The ARB table's keys, called resource IDs, are valid Dart variable names. They c
   );
 }</pre>
 
-#### 2. Parametrized strings
+#### 2. Parameterized strings
 
-Some strings may contain <em>$variable</em> tokens witch are replaced with your value. For example:
+Some strings may contain <em>$variable</em> tokens which are replaced with your values. For example:
 
     {   
         "aboutListTileTitle": "About $applicationName"  
     }
 
-The value for this resource ID is retrieved with a parametrized method instead of a simple getter:  
+The value for this resource ID is retrieved with a parameterized method instead of a simple getter:  
 
     S.of(context).aboutListTileTitle(yourAppTitle)
 
@@ -112,7 +112,7 @@ Plural translations can be provided for several quantities: 0, 1, 2, "few", "man
         "selectedRowCountTitleOther": "$selectedRowCount items selected",</pre>
     }
 
-In your code you can use this methods
+Then, we can reference these strings as follows:
 
 <pre>S.of(context).selectedRowCountTitle("many")</pre>
 
@@ -129,11 +129,11 @@ or
     ```json
     {"tabLabel": "탭 $tabCount개 중 $tabIndex번째"}
     ```
-    will generate 
+    generates
     ```dart
     String tabLabel(String tabCount개, String tabIndex번째) => "탭 $tabCount개 중 $tabIndex번째";
     ```
-    Witch contains invalid Dart fields. In this case you should use 
+    Which contains invalid Dart fields. In this case you should use 
     ```json
     {"tabLabel": "탭 ${tabCount}개 중 ${tabIndex}번째"}
     ```
