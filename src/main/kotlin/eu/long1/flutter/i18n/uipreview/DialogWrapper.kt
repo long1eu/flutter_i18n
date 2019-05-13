@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import eu.long1.flutter.i18n.files.FileHelpers
@@ -46,7 +47,12 @@ class DialogWrapper(project: Project?, private val panel: JComponent) : com.inte
                     ) {
                         panel.selected.forEach { it ->
                             val langFile = psiManager.findFile(valuesDir.findChild(it)!!)
-                            val json = PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java)
+                            var json = PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java)
+                            if (json == null) {
+                                json = JsonElementGenerator(project).createObject("")
+                                langFile?.add(json as PsiElement);
+                                json = PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java)
+                            }
                             if (json!!.findProperty(panel.resId) == null)
                                 JsonPsiUtil.addProperty(json, property.copy() as JsonProperty, false)
                         }
