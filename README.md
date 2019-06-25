@@ -51,17 +51,17 @@ If you want to change the last step and to provided a default locale instead of 
             GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
-      <b>localeResolutionCallback:</b>
-          <b>S.delegate.resolution(fallback: const Locale('en', '')),</b>
+      <b>localeResolutionCallback:
+          S.delegate.resolution(fallback: const Locale('en', '')),</b>
       // or if no country requirement is requested
-      <b>localeResolutionCallback:</b>
-          <b>S.delegate.resolution(fallback: const Locale('en', ''), withCountry: false),</b>
+      <b>localeResolutionCallback:
+          S.delegate.resolution(fallback: const Locale('en', ''), withCountry: false),</b>
       // or
-      <b>localeListResolutionCallback:</b>
-          <b>S.delegate.listResolution(fallback: const Locale('en', '')),</b>    
+      <b>localeListResolutionCallback:
+          S.delegate.listResolution(fallback: const Locale('en', '')),</b>    
       // or if no country requirement is requested
-      <b>localeListResolutionCallback:</b>
-          <b>S.delegate.listResolution(fallback: const Locale('en', ''), withCountry: false),</b>    
+      <b>localeListResolutionCallback:
+          S.delegate.listResolution(fallback: const Locale('en', ''), withCountry: false),</b>    
       title: 'Flutter Demo',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
