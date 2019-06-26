@@ -1,0 +1,85 @@
+class S implements WidgetsLocalizations {
+  const S();
+
+  static S current;
+
+  static const GeneratedLocalizationsDelegate delegate =
+    GeneratedLocalizationsDelegate();
+
+  static S of(BuildContext context) => Localizations.of<S>(context, S);
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  String get alertDialogLabel => 'Alert';
+  String get anteMeridiemAbbreviation => 'AM';
+  String get app_name => '';
+  String get backButtonTooltip => 'Back';
+  String get cancelButtonLabel => 'CANCEL';
+  String get closeButtonLabel => 'CLOSE';
+  String get closeButtonTooltip => 'Close';
+  String get collapsedIconTapHint => 'Expand';
+  String get continueButtonLabel => 'CONTINUE';
+  String get copyButtonLabel => 'COPY';
+  String get cutButtonLabel => 'CUT';
+  String get deleteButtonTooltip => 'Delete';
+  String get dialogLabel => 'Dialog';
+  String get drawerLabel => 'Navigation menu';
+  String get expandedIconTapHint => 'Collapse';
+  String get hideAccountsLabel => 'Hide accounts';
+  String get licensesPageTitle => 'Licenses';
+  String get modalBarrierDismissLabel => 'Dismiss';
+  String get nextMonthTooltip => 'Next month';
+  String get nextPageTooltip => 'Next page';
+  String get okButtonLabel => 'OK';
+  String get openAppDrawerTooltip => 'Open navigation menu';
+  String get pasteButtonLabel => 'PASTE';
+  String get popupMenuLabel => 'Popup menu';
+  String get postMeridiemAbbreviation => 'PM';
+  String get previousMonthTooltip => 'Previous month';
+  String get previousPageTooltip => 'Previous page';
+  String get refreshIndicatorSemanticLabel => 'Refresh';
+  String get reorderItemDown => 'Move down';
+  String get reorderItemLeft => 'Move left';
+  String get reorderItemRight => 'Move right';
+  String get reorderItemToEnd => 'Move to the end';
+  String get reorderItemToStart => 'Move to the start';
+  String get reorderItemUp => 'Move up';
+  String get rowsPerPageTitle => 'Rows per page:';
+  String get scriptCategory => 'English-like';
+  String get searchFieldLabel => 'Search';
+  String get selectAllButtonLabel => 'SELECT ALL';
+  String get showAccountsLabel => 'Show accounts';
+  String get showMenuTooltip => 'Show menu';
+  String get signedInLabel => 'Signed in';
+  String get timeOfDayFormat => 'h:mm a';
+  String get timePickerHourModeAnnouncement => 'Select hours';
+  String get timePickerMinuteModeAnnouncement => 'Select minutes';
+  String get viewLicensesButtonLabel => 'VIEW LICENSES';
+
+  String aboutListTileTitle(dynamic applicationName) => 'About $applicationName';
+  String pageRowsInfoTitle(dynamic firstRow, dynamic lastRow, dynamic rowCount) => '$firstRow–$lastRow of $rowCount';
+  String pageRowsInfoTitleApproximate(dynamic firstRow, dynamic lastRow, dynamic rowCount) => '$firstRow–$lastRow of about $rowCount';
+  String tabLabel(dynamic tabIndex, dynamic tabCount) => 'Tab \$$tabIndex of $tabCount';
+
+  String remainingTextFieldCharacterCount(dynamic remainingCount) {
+    switch (remainingCount.toString().toLowerCase()) {
+      case '0':
+        return 'No characters remaining';
+      case '1':
+        return '1 character remaining';
+      default:
+        return '$remainingCount characters remaining';
+    }
+  }
+  String selectedRowCountTitle(dynamic selectedRowCount) {
+    switch (selectedRowCount.toString().toLowerCase()) {
+      case '0':
+        return 'No items selected';
+      case '1':
+        return '1 item selected';
+      default:
+        return '$selectedRowCount items selected';
+    }
+  }
+}

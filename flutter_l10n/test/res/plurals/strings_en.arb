@@ -1,0 +1,15 @@
+{
+  "itemDown": "The item is down.",
+  "itemLeft": "The item is left.",
+  "characterCountZero": "The character count is 0.",
+  "characterCountOne": "The character count is 1.",
+  "characterCounttwo": "The character count is 2.",
+  "characterCountfew": "The character a few.",
+  "characterCountMany": "The character many :D.",
+  "characterCountOther": "The are other characters.",
+  "testOne": "This should not be included.",
+  "test_two": "Neither this one.",
+  "carCount_other": "The many many cars.",
+  "carCount_few": "Just a few cars.",
+  "oneCar": "On lonely car."
+}

@@ -1,0 +1,134 @@
+class $iw extends S {
+  const $iw();
+
+  @override
+  TextDirection get textDirection => TextDirection.rtl;
+
+  @override
+  String get alertDialogLabel => 'התראה';
+  @override
+  String get anteMeridiemAbbreviation => 'AM';
+  @override
+  String get app_name => '';
+  @override
+  String get backButtonTooltip => 'הקודם';
+  @override
+  String get cancelButtonLabel => 'ביטול';
+  @override
+  String get closeButtonLabel => 'סגירה';
+  @override
+  String get closeButtonTooltip => 'סגירה';
+  @override
+  String get collapsedIconTapHint => 'הרחבה';
+  @override
+  String get continueButtonLabel => 'המשך';
+  @override
+  String get copyButtonLabel => 'העתקה';
+  @override
+  String get cutButtonLabel => 'גזירה';
+  @override
+  String get deleteButtonTooltip => 'מחיקה';
+  @override
+  String get dialogLabel => 'תיבת דו-שיח';
+  @override
+  String get drawerLabel => 'תפריט ניווט';
+  @override
+  String get expandedIconTapHint => 'כיווץ';
+  @override
+  String get hideAccountsLabel => 'הסתרת החשבונות';
+  @override
+  String get licensesPageTitle => 'רישיונות';
+  @override
+  String get modalBarrierDismissLabel => 'סגירה';
+  @override
+  String get nextMonthTooltip => 'החודש הבא';
+  @override
+  String get nextPageTooltip => 'הדף הבא';
+  @override
+  String get okButtonLabel => 'אישור';
+  @override
+  String get openAppDrawerTooltip => 'פתיחה של תפריט הניווט';
+  @override
+  String get pasteButtonLabel => 'הדבקה';
+  @override
+  String get popupMenuLabel => 'תפריט קופץ';
+  @override
+  String get postMeridiemAbbreviation => 'PM';
+  @override
+  String get previousMonthTooltip => 'החודש הקודם';
+  @override
+  String get previousPageTooltip => 'הדף הקודם';
+  @override
+  String get refreshIndicatorSemanticLabel => 'TBD';
+  @override
+  String get reorderItemDown => 'העברה למטה';
+  @override
+  String get reorderItemLeft => 'העברה שמאלה';
+  @override
+  String get reorderItemRight => 'העברה ימינה';
+  @override
+  String get reorderItemToEnd => 'העברה לסוף';
+  @override
+  String get reorderItemToStart => 'העברה להתחלה';
+  @override
+  String get reorderItemUp => 'העברה למעלה';
+  @override
+  String get rowsPerPageTitle => 'שורות בכל דף:';
+  @override
+  String get scriptCategory => 'English-like';
+  @override
+  String get searchFieldLabel => 'חיפוש';
+  @override
+  String get selectAllButtonLabel => 'בחירת הכול';
+  @override
+  String get showAccountsLabel => 'הצגת החשבונות';
+  @override
+  String get showMenuTooltip => 'הצגת התפריט';
+  @override
+  String get signedInLabel => 'מחובר';
+  @override
+  String get timeOfDayFormat => 'H:mm';
+  @override
+  String get timePickerHourModeAnnouncement => 'בחירת שעות';
+  @override
+  String get timePickerMinuteModeAnnouncement => 'בחירת דקות';
+  @override
+  String get viewLicensesButtonLabel => 'הצגת הרישיונות';
+
+  @override
+  String aboutListTileTitle(dynamic applicationName) => 'מידע על $applicationName';
+  @override
+  String pageRowsInfoTitle(dynamic lastRow, dynamic firstRow, dynamic rowCount) => '$lastRow–$firstRow מתוך $rowCount';
+  @override
+  String pageRowsInfoTitleApproximate(dynamic lastRow, dynamic firstRow, dynamic rowCount) => '$lastRow–$firstRow מתוך כ-$rowCount';
+  @override
+  String tabLabel(dynamic tabIndex, dynamic tabCount) => 'כרטיסייה $tabIndex מתוך $tabCount';
+
+  @override
+  String remainingTextFieldCharacterCount(dynamic remainingCount) {
+    switch (remainingCount.toString().toLowerCase()) {
+      case '0':
+        return 'TBD';
+      case '1':
+        return 'נותר תו אחד';
+      default:
+        return 'נותרו $remainingCount תווים';
+    }
+  }
+  @override
+  String selectedRowCountTitle(dynamic selectedRowCount) {
+    switch (selectedRowCount.toString().toLowerCase()) {
+      case '1':
+        return 'פריט אחד נבחר';
+      default:
+        return '$selectedRowCount פריטים נבחרו';
+    }
+  }
+}
+
+class $he_IL extends $iw {
+  const $he_IL();
+
+  @override
+  TextDirection get textDirection => TextDirection.rtl;
+}

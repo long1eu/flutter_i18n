@@ -1,0 +1,5 @@
+  String get key => 'value';
+
+  @override
+  String get key => 'value';
+

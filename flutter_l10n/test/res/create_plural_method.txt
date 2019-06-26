@@ -1,0 +1,35 @@
+  String characterCount(dynamic param) {
+    switch (param.toString().toLowerCase()) {
+      case '0':
+        return 'The character count is 0.';
+      case '1':
+        return 'The character count is 1.';
+      case '2':
+        return 'The character count is 2.';
+      case 'few':
+        return 'The character a few.';
+      case 'many':
+        return 'The character many :D.';
+      default:
+        return 'The are other characters.';
+    }
+  }
+
+  @override
+  String characterCount(dynamic param) {
+    switch (param.toString().toLowerCase()) {
+      case '0':
+        return 'The character count is 0.';
+      case '1':
+        return 'The character count is 1.';
+      case '2':
+        return 'The character count is 2.';
+      case 'few':
+        return 'The character a few.';
+      case 'many':
+        return 'The character many :D.';
+      default:
+        return 'The are other characters.';
+    }
+  }
+

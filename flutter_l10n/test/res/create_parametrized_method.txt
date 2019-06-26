@@ -1,0 +1,9 @@
+  String key(dynamic param) => 'This $param method.';
+
+  String key(dynamic param1, dynamic param2) => 'This $param1 method and $param2.';
+
+  @override
+  String key(dynamic param) => 'This $param method.';
+
+  String get key => 'value';
+

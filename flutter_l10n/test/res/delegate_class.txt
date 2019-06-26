@@ -1,0 +1,422 @@
+class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
+  const GeneratedLocalizationsDelegate();
+
+  List<Locale> get supportedLocales {
+    return const <Locale>[
+      Locale('ar', ''),
+      Locale('bg', ''),
+      Locale('bs', ''),
+      Locale('ca', ''),
+      Locale('cs', ''),
+      Locale('da', ''),
+      Locale('de', ''),
+      Locale('de', 'CH'),
+      Locale('el', ''),
+      Locale('en', ''),
+      Locale('en', 'AU'),
+      Locale('en', 'CA'),
+      Locale('en', 'GB'),
+      Locale('en', 'IE'),
+      Locale('en', 'IN'),
+      Locale('en', 'SG'),
+      Locale('en', 'ZA'),
+      Locale('es', ''),
+      Locale('es', '419'),
+      Locale('es', 'AR'),
+      Locale('es', 'BO'),
+      Locale('es', 'CL'),
+      Locale('es', 'CO'),
+      Locale('es', 'CR'),
+      Locale('es', 'DO'),
+      Locale('es', 'EC'),
+      Locale('es', 'GT'),
+      Locale('es', 'HN'),
+      Locale('es', 'MX'),
+      Locale('es', 'NI'),
+      Locale('es', 'PA'),
+      Locale('es', 'PE'),
+      Locale('es', 'PR'),
+      Locale('es', 'PY'),
+      Locale('es', 'SV'),
+      Locale('es', 'US'),
+      Locale('es', 'UY'),
+      Locale('es', 'VE'),
+      Locale('et', ''),
+      Locale('fa', ''),
+      Locale('fi', ''),
+      Locale('fil', ''),
+      Locale('fr', ''),
+      Locale('fr', 'CA'),
+      Locale('gsw', ''),
+      Locale('he', ''),
+      Locale('hi', ''),
+      Locale('hr', ''),
+      Locale('hu', ''),
+      Locale('id', ''),
+      Locale('it', ''),
+      Locale('he', 'IL'),
+      Locale('ja', ''),
+      Locale('km', ''),
+      Locale('ko', ''),
+      Locale('lt', ''),
+      Locale('lv', ''),
+      Locale('mn', ''),
+      Locale('mr', ''),
+      Locale('ms', ''),
+      Locale('nb', ''),
+      Locale('nl', ''),
+      Locale('pl', ''),
+      Locale('ps', ''),
+      Locale('pt', ''),
+      Locale('pt', 'PT'),
+      Locale('ro', ''),
+      Locale('ru', ''),
+      Locale('sk', ''),
+      Locale('sl', ''),
+      Locale('sr', ''),
+      Locale('sr', 'Latn'),
+      Locale('sv', ''),
+      Locale('ta', ''),
+      Locale('th', ''),
+      Locale('tl', ''),
+      Locale('tr', ''),
+      Locale('uk', ''),
+      Locale('ur', ''),
+      Locale('vi', ''),
+      Locale('zh', ''),
+      Locale('zh', 'HK'),
+      Locale('zh', 'TW'),
+    ];
+  }
+
+  LocaleListResolutionCallback listResolution({Locale fallback, bool withCountry = true}) {
+    return (List<Locale> locales, Iterable<Locale> supported) {
+      if (locales == null || locales.isEmpty) {
+        return fallback ?? supported.first;
+      } else {
+        return _resolve(locales.first, fallback, supported, withCountry);
+      }
+    };
+  }
+
+  LocaleResolutionCallback resolution({Locale fallback, bool withCountry = true}) {
+    return (Locale locale, Iterable<Locale> supported) {
+      return _resolve(locale, fallback, supported, withCountry);
+    };
+  }
+
+  @override
+  Future<S> load(Locale locale) {
+    final String lang = getLang(locale);
+    if (lang != null) {
+      switch (lang) {
+        case 'ar':
+          S.current = const $ar();
+          return SynchronousFuture<S>(S.current);
+        case 'bg':
+          S.current = const $bg();
+          return SynchronousFuture<S>(S.current);
+        case 'bs':
+          S.current = const $bs();
+          return SynchronousFuture<S>(S.current);
+        case 'ca':
+          S.current = const $ca();
+          return SynchronousFuture<S>(S.current);
+        case 'cs':
+          S.current = const $cs();
+          return SynchronousFuture<S>(S.current);
+        case 'da':
+          S.current = const $da();
+          return SynchronousFuture<S>(S.current);
+        case 'de':
+          S.current = const $de();
+          return SynchronousFuture<S>(S.current);
+        case 'de_CH':
+          S.current = const $de_CH();
+          return SynchronousFuture<S>(S.current);
+        case 'el':
+          S.current = const $el();
+          return SynchronousFuture<S>(S.current);
+        case 'en':
+          S.current = const $en();
+          return SynchronousFuture<S>(S.current);
+        case 'en_AU':
+          S.current = const $en_AU();
+          return SynchronousFuture<S>(S.current);
+        case 'en_CA':
+          S.current = const $en_CA();
+          return SynchronousFuture<S>(S.current);
+        case 'en_GB':
+          S.current = const $en_GB();
+          return SynchronousFuture<S>(S.current);
+        case 'en_IE':
+          S.current = const $en_IE();
+          return SynchronousFuture<S>(S.current);
+        case 'en_IN':
+          S.current = const $en_IN();
+          return SynchronousFuture<S>(S.current);
+        case 'en_SG':
+          S.current = const $en_SG();
+          return SynchronousFuture<S>(S.current);
+        case 'en_ZA':
+          S.current = const $en_ZA();
+          return SynchronousFuture<S>(S.current);
+        case 'es':
+          S.current = const $es();
+          return SynchronousFuture<S>(S.current);
+        case 'es_419':
+          S.current = const $es_419();
+          return SynchronousFuture<S>(S.current);
+        case 'es_AR':
+          S.current = const $es_AR();
+          return SynchronousFuture<S>(S.current);
+        case 'es_BO':
+          S.current = const $es_BO();
+          return SynchronousFuture<S>(S.current);
+        case 'es_CL':
+          S.current = const $es_CL();
+          return SynchronousFuture<S>(S.current);
+        case 'es_CO':
+          S.current = const $es_CO();
+          return SynchronousFuture<S>(S.current);
+        case 'es_CR':
+          S.current = const $es_CR();
+          return SynchronousFuture<S>(S.current);
+        case 'es_DO':
+          S.current = const $es_DO();
+          return SynchronousFuture<S>(S.current);
+        case 'es_EC':
+          S.current = const $es_EC();
+          return SynchronousFuture<S>(S.current);
+        case 'es_GT':
+          S.current = const $es_GT();
+          return SynchronousFuture<S>(S.current);
+        case 'es_HN':
+          S.current = const $es_HN();
+          return SynchronousFuture<S>(S.current);
+        case 'es_MX':
+          S.current = const $es_MX();
+          return SynchronousFuture<S>(S.current);
+        case 'es_NI':
+          S.current = const $es_NI();
+          return SynchronousFuture<S>(S.current);
+        case 'es_PA':
+          S.current = const $es_PA();
+          return SynchronousFuture<S>(S.current);
+        case 'es_PE':
+          S.current = const $es_PE();
+          return SynchronousFuture<S>(S.current);
+        case 'es_PR':
+          S.current = const $es_PR();
+          return SynchronousFuture<S>(S.current);
+        case 'es_PY':
+          S.current = const $es_PY();
+          return SynchronousFuture<S>(S.current);
+        case 'es_SV':
+          S.current = const $es_SV();
+          return SynchronousFuture<S>(S.current);
+        case 'es_US':
+          S.current = const $es_US();
+          return SynchronousFuture<S>(S.current);
+        case 'es_UY':
+          S.current = const $es_UY();
+          return SynchronousFuture<S>(S.current);
+        case 'es_VE':
+          S.current = const $es_VE();
+          return SynchronousFuture<S>(S.current);
+        case 'et':
+          S.current = const $et();
+          return SynchronousFuture<S>(S.current);
+        case 'fa':
+          S.current = const $fa();
+          return SynchronousFuture<S>(S.current);
+        case 'fi':
+          S.current = const $fi();
+          return SynchronousFuture<S>(S.current);
+        case 'fil':
+          S.current = const $fil();
+          return SynchronousFuture<S>(S.current);
+        case 'fr':
+          S.current = const $fr();
+          return SynchronousFuture<S>(S.current);
+        case 'fr_CA':
+          S.current = const $fr_CA();
+          return SynchronousFuture<S>(S.current);
+        case 'gsw':
+          S.current = const $gsw();
+          return SynchronousFuture<S>(S.current);
+        case 'he':
+          S.current = const $he();
+          return SynchronousFuture<S>(S.current);
+        case 'hi':
+          S.current = const $hi();
+          return SynchronousFuture<S>(S.current);
+        case 'hr':
+          S.current = const $hr();
+          return SynchronousFuture<S>(S.current);
+        case 'hu':
+          S.current = const $hu();
+          return SynchronousFuture<S>(S.current);
+        case 'id':
+          S.current = const $id();
+          return SynchronousFuture<S>(S.current);
+        case 'it':
+          S.current = const $it();
+          return SynchronousFuture<S>(S.current);
+        case 'iw_IL':
+        case 'he_IL':
+          S.current = const $he_IL();
+          return SynchronousFuture<S>(S.current);
+        case 'ja':
+          S.current = const $ja();
+          return SynchronousFuture<S>(S.current);
+        case 'km':
+          S.current = const $km();
+          return SynchronousFuture<S>(S.current);
+        case 'ko':
+          S.current = const $ko();
+          return SynchronousFuture<S>(S.current);
+        case 'lt':
+          S.current = const $lt();
+          return SynchronousFuture<S>(S.current);
+        case 'lv':
+          S.current = const $lv();
+          return SynchronousFuture<S>(S.current);
+        case 'mn':
+          S.current = const $mn();
+          return SynchronousFuture<S>(S.current);
+        case 'mr':
+          S.current = const $mr();
+          return SynchronousFuture<S>(S.current);
+        case 'ms':
+          S.current = const $ms();
+          return SynchronousFuture<S>(S.current);
+        case 'nb':
+          S.current = const $nb();
+          return SynchronousFuture<S>(S.current);
+        case 'nl':
+          S.current = const $nl();
+          return SynchronousFuture<S>(S.current);
+        case 'pl':
+          S.current = const $pl();
+          return SynchronousFuture<S>(S.current);
+        case 'ps':
+          S.current = const $ps();
+          return SynchronousFuture<S>(S.current);
+        case 'pt':
+          S.current = const $pt();
+          return SynchronousFuture<S>(S.current);
+        case 'pt_PT':
+          S.current = const $pt_PT();
+          return SynchronousFuture<S>(S.current);
+        case 'ro':
+          S.current = const $ro();
+          return SynchronousFuture<S>(S.current);
+        case 'ru':
+          S.current = const $ru();
+          return SynchronousFuture<S>(S.current);
+        case 'sk':
+          S.current = const $sk();
+          return SynchronousFuture<S>(S.current);
+        case 'sl':
+          S.current = const $sl();
+          return SynchronousFuture<S>(S.current);
+        case 'sr':
+          S.current = const $sr();
+          return SynchronousFuture<S>(S.current);
+        case 'sr_Latn':
+          S.current = const $sr_Latn();
+          return SynchronousFuture<S>(S.current);
+        case 'sv':
+          S.current = const $sv();
+          return SynchronousFuture<S>(S.current);
+        case 'ta':
+          S.current = const $ta();
+          return SynchronousFuture<S>(S.current);
+        case 'th':
+          S.current = const $th();
+          return SynchronousFuture<S>(S.current);
+        case 'tl':
+          S.current = const $tl();
+          return SynchronousFuture<S>(S.current);
+        case 'tr':
+          S.current = const $tr();
+          return SynchronousFuture<S>(S.current);
+        case 'uk':
+          S.current = const $uk();
+          return SynchronousFuture<S>(S.current);
+        case 'ur':
+          S.current = const $ur();
+          return SynchronousFuture<S>(S.current);
+        case 'vi':
+          S.current = const $vi();
+          return SynchronousFuture<S>(S.current);
+        case 'zh':
+          S.current = const $zh();
+          return SynchronousFuture<S>(S.current);
+        case 'zh_HK':
+          S.current = const $zh_HK();
+          return SynchronousFuture<S>(S.current);
+        case 'zh_TW':
+          S.current = const $zh_TW();
+          return SynchronousFuture<S>(S.current);
+        default:
+          // NO-OP.
+      }
+    }
+    S.current = const S();
+    return SynchronousFuture<S>(S.current);
+  }
+
+  @override
+  bool isSupported(Locale locale) => _isSupported(locale, true);
+
+  @override
+  bool shouldReload(GeneratedLocalizationsDelegate old) => false;
+
+  /// Internal method to resolve a locale from a list of locales.
+  Locale _resolve(Locale locale, Locale fallback, Iterable<Locale> supported, bool withCountry) {
+    if (locale == null || !_isSupported(locale, withCountry)) {
+      return fallback ?? supported.first;
+    }
+
+    final Locale languageLocale = Locale(locale.languageCode, "");
+    if (supported.contains(locale)) {
+      return locale;
+    } else if (supported.contains(languageLocale)) {
+      return languageLocale;
+    } else {
+      final Locale fallbackLocale = fallback ?? supported.first;
+      return fallbackLocale;
+    }
+  }
+
+  /// Returns true if the specified locale is supported, false otherwise.
+  bool _isSupported(Locale locale, bool withCountry) {
+    if (locale != null) {
+      for (Locale supportedLocale in supportedLocales) {
+        // Language must always match both locales.
+        if (supportedLocale.languageCode != locale.languageCode) {
+          continue;
+        }
+
+        // If country code matches, return this locale.
+        if (supportedLocale.countryCode == locale.countryCode) {
+          return true;
+        }
+
+        // If no country requirement is requested, check if this locale has no country.
+        if (!withCountry && (supportedLocale.countryCode == null || supportedLocale.countryCode.isEmpty)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
+
+String getLang(Locale l) => l == null
+  ? null
+  : l.countryCode != null && l.countryCode.isEmpty
+    ? l.languageCode
+    : l.toString();

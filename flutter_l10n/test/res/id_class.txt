@@ -1,0 +1,127 @@
+class $id extends S {
+  const $id();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get alertDialogLabel => 'Notifikasi';
+  @override
+  String get anteMeridiemAbbreviation => 'AM';
+  @override
+  String get app_name => '';
+  @override
+  String get backButtonTooltip => 'Kembali';
+  @override
+  String get cancelButtonLabel => 'BATAL';
+  @override
+  String get closeButtonLabel => 'TUTUP';
+  @override
+  String get closeButtonTooltip => 'Tutup';
+  @override
+  String get collapsedIconTapHint => 'Luaskan';
+  @override
+  String get continueButtonLabel => 'LANJUTKAN';
+  @override
+  String get copyButtonLabel => 'SALIN';
+  @override
+  String get cutButtonLabel => 'POTONG';
+  @override
+  String get deleteButtonTooltip => 'Hapus';
+  @override
+  String get dialogLabel => 'Dialog';
+  @override
+  String get drawerLabel => 'Menu navigasi';
+  @override
+  String get expandedIconTapHint => 'Ciutkan';
+  @override
+  String get hideAccountsLabel => 'Sembunyikan akun';
+  @override
+  String get licensesPageTitle => 'Lisensi';
+  @override
+  String get modalBarrierDismissLabel => 'Tutup';
+  @override
+  String get nextMonthTooltip => 'Bulan berikutnya';
+  @override
+  String get nextPageTooltip => 'Halaman berikutnya';
+  @override
+  String get okButtonLabel => 'Oke';
+  @override
+  String get openAppDrawerTooltip => 'Buka menu navigasi';
+  @override
+  String get pasteButtonLabel => 'TEMPEL';
+  @override
+  String get popupMenuLabel => 'Menu pop-up';
+  @override
+  String get postMeridiemAbbreviation => 'PM';
+  @override
+  String get previousMonthTooltip => 'Bulan sebelumnya';
+  @override
+  String get previousPageTooltip => 'Halaman sebelumnya';
+  @override
+  String get refreshIndicatorSemanticLabel => 'TBD';
+  @override
+  String get reorderItemDown => 'Turunkan';
+  @override
+  String get reorderItemLeft => 'Pindahkan ke kiri';
+  @override
+  String get reorderItemRight => 'Pindahkan ke kanan';
+  @override
+  String get reorderItemToEnd => 'Pindahkan ke akhir';
+  @override
+  String get reorderItemToStart => 'Pindahkan ke awal';
+  @override
+  String get reorderItemUp => 'Naikkan';
+  @override
+  String get rowsPerPageTitle => 'Baris per halaman:';
+  @override
+  String get scriptCategory => 'English-like';
+  @override
+  String get searchFieldLabel => 'Telusuri';
+  @override
+  String get selectAllButtonLabel => 'PILIH SEMUA';
+  @override
+  String get showAccountsLabel => 'Tampilkan akun';
+  @override
+  String get showMenuTooltip => 'Tampilkan menu';
+  @override
+  String get signedInLabel => 'Telah login';
+  @override
+  String get timeOfDayFormat => 'HH:mm';
+  @override
+  String get timePickerHourModeAnnouncement => 'Pilih jam';
+  @override
+  String get timePickerMinuteModeAnnouncement => 'Pilih menit';
+  @override
+  String get viewLicensesButtonLabel => 'LIHAT LISENSI';
+
+  @override
+  String aboutListTileTitle(dynamic applicationName) => 'Tentang $applicationName';
+  @override
+  String pageRowsInfoTitle(dynamic firstRow, dynamic lastRow, dynamic rowCount) => '$firstRow–$lastRow dari $rowCount';
+  @override
+  String pageRowsInfoTitleApproximate(dynamic firstRow, dynamic lastRow, dynamic rowCount) => '$firstRow–$lastRow dari kira-kira $rowCount';
+  @override
+  String tabLabel(dynamic tabIndex, dynamic tabCount) => 'Tab $tabIndex dari $tabCount';
+
+  @override
+  String remainingTextFieldCharacterCount(dynamic remainingCount) {
+    switch (remainingCount.toString().toLowerCase()) {
+      case '0':
+        return 'TBD';
+      case '1':
+        return 'Sisa 1 karakter';
+      default:
+        return 'Sisa $remainingCount karakter';
+    }
+  }
+  @override
+  String selectedRowCountTitle(dynamic selectedRowCount) {
+    switch (selectedRowCount.toString().toLowerCase()) {
+      case '1':
+        return '1 item dipilih';
+      default:
+        return '$selectedRowCount item dipilih';
+    }
+  }
+}
