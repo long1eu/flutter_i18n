@@ -1,3 +1,16 @@
+# Maintenance
+
+I'm refactoring the plugin so we can add VSCode support. Also I've scheduled maintenance windows, a day a month which I will dedicate for responding to pull-requests and issues. It will be the last friday of each month as following:
+ - June 28
+ - July 26
+ - August 30
+ - September 27
+ - October 25
+ - November 29
+ - December 27
+ 
+ Two days after this date a new version will be released. So make sure to add your issues as soon as possible, so they can make it to the next release. 
+
 # Synopsis
 
 This plugin helps you internationalize you Flutter app by generating the needed boiler plate code. You just add and organize strings in files that are contained in the /res/values folder. This plugin is based on the [Internationalizing Flutter Apps](https://flutter.io/tutorials/internationalization/) tutorial and on the [Material Library Localizations](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations/lib/src/l10n) package. Much of the instructions are taken from there.
