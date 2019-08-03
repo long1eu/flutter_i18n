@@ -3,8 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.21'
 }
 
+def pluginVersionSuffix = ideaVersionPrefix != '' ? '-' + ideaVersionPrefix : ''
+
 group 'eu.long1.flutter'
-version pluginVersion
+version (pluginVersion + pluginVersionSuffix)
 
 repositories {
     mavenCentral()
@@ -34,7 +36,7 @@ compileTestKotlin {
 }
 
 patchPluginXml {
-    version pluginVersion
+    version (pluginVersion + pluginVersionSuffix)
 }
 
 // Publishing credentials to JetBrains.
@@ -106,7 +108,10 @@ if (productDetails == null || !(productDetails instanceof Map)) {
 // Adjust plugin's output file name.
 rootProject.setBuildDir("${rootProject.buildDir}/${productDetails.comments}")
 
-System.out.println("\nBuilding plugin for IDEA version $ideaVersion (branch ${productDetails.comments})\n")
+System.out.println(
+    "\nBuilding plugin ${(pluginVersion + pluginVersionSuffix)} for IDEA " +
+    "version $ideaVersion (branch ${productDetails.comments})\n"
+)
 System.out.println("Since: ${productDetails.sinceBuild}")
 System.out.println("Until: ${productDetails.untilBuild}")
 System.out.println("Dart: ${productDetails.dartPluginVersion}")
