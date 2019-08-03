@@ -34,7 +34,7 @@ class JsonKeysInspector : BaseLocalInspectionTool() {
 
     override fun getDisplayName(): String = "The string key can start with a letter or underscore (_), followed by any combination of those characters plus digits."
 
-    override fun getGroupDisplayName(): String = "Flutter I18n"
+    override fun getGroupDisplayName(): String = "Flutter i18n"
 
     companion object {
         private val keyPattern = Regex("^[a-zA-Z_\$][a-zA-Z_\$0-9]*\$")

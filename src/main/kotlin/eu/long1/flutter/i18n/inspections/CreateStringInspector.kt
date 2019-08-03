@@ -43,5 +43,5 @@ class CreateStringInspector : BaseLocalInspectionTool() {
     }
 
     override fun getDisplayName(): String = "Create string resource from S class reference"
-    override fun getGroupDisplayName(): String = "Flutter I18n"
+    override fun getGroupDisplayName(): String = "Flutter i18n"
 }
