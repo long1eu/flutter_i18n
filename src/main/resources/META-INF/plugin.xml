@@ -5,6 +5,7 @@
     <vendor email="home@long1.eu">long1eu</vendor>
     <depends>com.intellij.modules.json</depends>
     <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.all</depends>
     <depends>com.intellij.modules.platform</depends>
     <depends>Dart</depends>
