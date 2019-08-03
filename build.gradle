@@ -50,7 +50,17 @@ publishPlugin {
 // IntelliJ base plugin configuration. The rest of the configuration is dynamic.
 intellij {
     pluginName 'Flutter i18n'
-    plugins = ['yaml']
+
+    def requiredPlugins = ['yaml']
+
+    // Starting with 2019.2, JetBrains extracted the Java functionality into its own plugin
+    // so we have to check which plugins to load as build will fail when compiling for older IDE.
+    // See: https://blog.jetbrains.com/platform/2019/06/java-functionality-extracted-as-a-plugin/
+    if (ideaVersionPrefix != '' && ideaVersionPrefix.toInteger() >= 192) {
+        requiredPlugins.add('java')
+    }
+
+    plugins = requiredPlugins
 }
 
 // Load product matrix.
