@@ -11,10 +11,20 @@
     <depends>Dart</depends>
     <depends>io.flutter</depends>
 
-    <description>This plugin create a binding between your translations from .arb files and your Flutter app.
-    </description>
+    <description>This plugin creates a binding between your translations from .arb files and your Flutter app.</description>
 
     <change-notes><![CDATA[
+    <p><strong><span style="font-size: 18px;">1.0.6</span></strong></p>
+    <ul>
+    <li>fixed a null pointer exception in CreateStringInspector.kt</li>
+    </ul>
+
+    <p><strong><span style="font-size: 18px;">1.0.5</span></strong></p>
+    <ul>
+    <li><b>Non-breaking change in version naming</b> - To normalize the plugin version across different IDE branches, the IDE's version code will be added to the plugin's version, like so: 1.0.5-181, 1.0.5-191, etc.</li>
+    <li>upgraded Kotlin code to compile for 2019.2 IDE branch (<a href="https://blog.jetbrains.com/platform/2019/06/java-functionality-extracted-as-a-plugin/" target="_blank">click for more details</a>)</li>
+    </ul>
+
     <p><strong><span style="font-size: 18px;">0.2</span></strong></p>
     <ul>
     <li><b>Braking change</b> - Lang classes are prefixed by $ sign. If you user them directly you should update them or use `S.of(context)`</li>
