@@ -13,7 +13,7 @@ This plugin helps you internationalize you Flutter app by generating the needed 
   Widget build(BuildContext context) {
     return new MaterialApp(
       onGenerateTitle: (BuildContext context) => S.of(context).app_name,
-      <b>localizationsDelegates: const </**/LocalizationsDelegate</**/WidgetsLocalizations>>[
+      localizationsDelegates: const </**/LocalizationsDelegate</**/WidgetsLocalizations>>[
             S.delegate,
             // You need to add them if you are using the material library.
             // The material components usses this delegates to provide default 
@@ -51,17 +51,21 @@ If you want to change the last step and to provided a default locale instead of 
             GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
-      <b>localeResolutionCallback:
-          S.delegate.resolution(fallback: const Locale('en', '')),</b>
-      // or if no country requirement is requested
-      <b>localeResolutionCallback:
-          S.delegate.resolution(fallback: const Locale('en', ''), withCountry: false),</b>
-      // or
-      <b>localeListResolutionCallback:
-          S.delegate.listResolution(fallback: const Locale('en', '')),</b>    
-      // or if no country requirement is requested
-      <b>localeListResolutionCallback:
-          S.delegate.listResolution(fallback: const Locale('en', ''), withCountry: false),</b>    
+
+      <b>localeResolutionCallback:</b>
+          <b>S.delegate.resolution(fallback: const Locale('en', '')),</b>
+      // this is equivalent to having <b>withCountry: false</b>, as in the next call:
+      <b>localeResolutionCallback:</b>
+          <b>S.delegate.resolution(fallback: const Locale('en', ''), withCountry: false),</b>
+
+      // - OR -
+
+      <b>localeListResolutionCallback:</b>
+          <b>S.delegate.listResolution(fallback: const Locale('en', '')),</b>    
+      // this is equivalent to having <b>withCountry: false</b>, as in the next call:
+      <b>localeListResolutionCallback:</b>
+          <b>S.delegate.listResolution(fallback: const Locale('en', ''), withCountry: false),</b>
+
       title: 'Flutter Demo',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
@@ -79,7 +83,7 @@ ARB files extension stands for [Application Resource Bundle](https://github.com/
 
 Flutter internalization only depends on a small subset of the ARB format. Each .arb file contains a single JSON table that maps from resource IDs to localized values. Filenames contain the locale that the values have been translated for. For example, material_de.arb contains German translations, and material_ar.arb contains Arabic translations. Files that contain regional translations have names that include the locale's regional suffix. For example, material_en_GB.arb contains additional English translations that are specific to Great Britain.
 
-<b>The first English file is generated for you(/res/values/strings_en.arb).</b> Every arb file depends on this one. If you have a string in the German arb file(/res/values/strings_de.arb) that has an ID which is <b>not found</b> in the English file, it would not be listed. So you must be sure to first have the strings in the English file and then add other translations.
+<b>The first English file is generated for you(/res/values/strings_en.arb)</b>.</b> Every arb file depends on this one. If you have a string in the German arb file(/res/values/strings_de.arb) that has an ID which is <b>not found</b> in the English file, it would not be listed. So you must be sure to first have the strings in the English file and then add other translations.
 
 To add a new arb file right click on <b>values</b> folder and select <b>New</b> -><b> Arb </b><b>File</b>. Then pick your language from the list, and region if necessary.
 
