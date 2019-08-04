@@ -6,14 +6,14 @@ This plugin helps you internationalize you Flutter app by generating the needed 
 
 ### 1. Setup you App
 
- Setup your localizationsDelegates and your supportedLocales which allows the access to the internationalized strings.
+Setup your localizationsDelegates and your supportedLocales which allows the access to the internationalized strings.
 
 <pre style="margin-left: 80px;">class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       onGenerateTitle: (BuildContext context) => S.of(context).app_name,
-      localizationsDelegates: const </**/LocalizationsDelegate</**/WidgetsLocalizations>>[
+      <b>localizationsDelegates: const &lt;LocalizationsDelegate&lt;WidgetsLocalizations&gt;&gt;[
             S.delegate,
             // You need to add them if you are using the material library.
             // The material components usses this delegates to provide default 
@@ -21,7 +21,7 @@ This plugin helps you internationalize you Flutter app by generating the needed 
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,               
       ],
-      supportedLocales: S.delegate.supportedLocales,</b>      
+      supportedLocales: S.delegate.supportedLocales,</b>
       title: 'Flutter Demo',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
