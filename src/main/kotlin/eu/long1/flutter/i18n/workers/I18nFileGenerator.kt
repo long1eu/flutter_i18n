@@ -16,7 +16,6 @@ import eu.long1.flutter.i18n.arb.ArbFileType
 import eu.long1.flutter.i18n.files.FileHelpers
 import java.util.regex.Pattern
 
-
 class I18nFileGenerator(private val project: Project) {
 
     private val psiManager = PsiManager.getInstance(project)
@@ -102,7 +101,6 @@ class I18nFileGenerator(private val project: Project) {
         val parametrized = ids.filter { langMap[it]!!.contains("$") }
         ids -= parametrized
 
-
         var className = "\$$lang"
 
         builder.append(
@@ -116,7 +114,7 @@ class I18nFileGenerator(private val project: Project) {
 
         builder.append("}\n\n")
 
-        //for hebrew iw=he
+        // for hebrew iw=he
         if (lang.startsWith("iw")) {
             className = "\$he_IL"
             builder.append(
@@ -133,8 +131,7 @@ class I18nFileGenerator(private val project: Project) {
             val lang = langParts[0]
             val country = if (langParts.size == 2) langParts[1] else ""
 
-
-            //for hebrew iw=he
+            // for hebrew iw=he
             if (it.startsWith("iw")) {
                 builder.append("      Locale(\"he\", \"IL\"),\n")
             } else builder.append("      Locale(\"$lang\", \"$country\"),\n")
@@ -152,7 +149,6 @@ class I18nFileGenerator(private val project: Project) {
 
         builder.append(delegateClassEnd)
     }
-
 
     internal fun appendStringMethod(id: String, value: String, builder: StringBuilder, isOverride: Boolean = true) {
         if (isOverride) {
@@ -195,8 +191,11 @@ class I18nFileGenerator(private val project: Project) {
     }
 
     internal fun appendPluralMethod(
-        id: String, countsList: ArrayList<String>, valuesMap: HashMap<String, String>,
-        builder: StringBuilder, isOverride: Boolean = true
+        id: String,
+        countsList: ArrayList<String>,
+        valuesMap: HashMap<String, String>,
+        builder: StringBuilder,
+        isOverride: Boolean = true
     ) {
 
         val zero = countsList.contains("zero")
@@ -205,7 +204,6 @@ class I18nFileGenerator(private val project: Project) {
         val few = countsList.contains("few")
         val many = countsList.contains("many")
 
-
         val otherValue = valuesMap["${id}Other"] ?: valuesMap["${id}other"] ?: return
         val parameterName: String =
             if (PARAMETER_MATCHER.reset(otherValue).find()) {
@@ -213,7 +211,6 @@ class I18nFileGenerator(private val project: Project) {
             } else {
                 "param"
             }
-
 
         if (isOverride) {
             builder.append("  @override\n")
@@ -313,7 +310,6 @@ class I18nFileGenerator(private val project: Project) {
         return pluralIds
     }
 
-
     private fun getStringFromFile(file: PsiFile): HashMap<String, String>? {
         if (PsiTreeUtil.findChildOfType(file, PsiErrorElement::class.java) != null) return null
         val langMap = HashMap<String, String>()
@@ -341,10 +337,22 @@ import 'package:flutter/material.dart';
 """
 
         private const val sClassHeader =
-            """class S implements WidgetsLocalizations {
+            """typedef void LocaleChangeCallback(Locale locale);
+
+class S implements WidgetsLocalizations {
   const S();
 
   static S current;
+
+  static Locale _locale;
+  static bool _shouldReload = false;
+
+  static set locale(Locale _newLocale) {
+    _shouldReload = true;
+    S._locale = _newLocale;
+  }
+
+  static LocaleChangeCallback onLocaleChanged;
 
   static const GeneratedLocalizationsDelegate delegate =
     GeneratedLocalizationsDelegate();
@@ -386,6 +394,9 @@ import 'package:flutter/material.dart';
 
   @override
   Future<S> load(Locale locale) {
+    S._locale ??= _locale;
+    S._shouldReload = false;
+    final Locale locale = S._locale;
     final String lang = getLang(locale);
     if (lang != null) {
       switch (lang) {
@@ -404,7 +415,7 @@ import 'package:flutter/material.dart';
   bool isSupported(Locale locale) => _isSupported(locale, true);
 
   @override
-  bool shouldReload(GeneratedLocalizationsDelegate old) => false;
+  bool shouldReload(GeneratedLocalizationsDelegate old) => S._shouldReload;
 
   ///
   /// Internal method to resolve a locale from a list of locales.

@@ -165,6 +165,28 @@ or
     ```json
     {"checkout_message": "You have to pay \$$price"}
     ```
+
+### 3.  Allow users to change local manually. 
+You can use `S.onLocaleChanged` to change lang at runtime. You need to make a few changes to your application entry file :
+<pre style="margin-left: 60px;">@override
+  void initState() {
+    super.initState();
+    S.onLocaleChanged = onLocaleChange; // Add this line
+  }
+
+  // Declare the method.
+  // `setState` so all the application could be reloaded when lang is changed.
+  void onLocaleChange(Locale locale) {
+    setState(() {
+      S.locale = locale;
+    });
+}</pre>
+
+Now you can call this from everywhere in you application :
+<pre style="margin-left: 60px;">onTap: () {
+  S.onLocaleChanged(Locale("fr"));
+}),</pre>
+
 # Issues
 
 There are some performance improvements and bug fixes that this plugin could use, so feel free to PR.
