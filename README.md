@@ -147,6 +147,22 @@ or
 
 <pre>S.of(context).selectedRowCountTitle("$selectedRowCount")</pre>
 
+### 3. Turning off the plugin per project.
+
+With the release of v1.1.0 of the plugin, it is possible to turn on or off the plugin per project by adding
+a new top-level configuration option in your project's **pubspec.yaml** file: **flutter_i18n**
+
+The plugin will be turned off by default for Dart-only projects, and on by default for Flutter projects.
+To change this setting, however, you have two options under the top-level **flutter_i18n** configuration:
+
+**enable-flutter-i18n**: true / false
+
+To activate the plugin for a Flutter project. The default setting is true.
+
+**enable-for-dart**: true / false
+
+To activate the plugin for a Dart-only project. The default setting is false.
+
 ### NOTES:
 * The plugin also supports `${variable}` notation. Use this when the parser does not catch the parameters properly. For example:
     ```json
