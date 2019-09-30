@@ -3,9 +3,7 @@ package eu.long1.flutter.i18n.workers
 import com.intellij.json.psi.JsonElementGenerator
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -27,7 +25,6 @@ import io.flutter.utils.FlutterModuleUtils
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.concurrent.scheduleAtFixedRate
-
 
 class Initializer : StartupActivity, DocumentListener {
 

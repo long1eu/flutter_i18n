@@ -2,6 +2,7 @@ package eu.long1.flutter.i18n.workers
 
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -29,9 +30,12 @@ class I18nFileGenerator(private val project: Project) {
         val files = stringFiles()
 
         if (files.isEmpty()) {
-            createFileForLang("en")?.let {
-                files.add(it)
-            } ?: run {
+            ApplicationManager.getApplication().runWriteAction {
+                createFileForLang("en")?.let {
+                    files.add(it)
+                }
+            }
+            if (files.isEmpty()) {
                 return
             }
         }
