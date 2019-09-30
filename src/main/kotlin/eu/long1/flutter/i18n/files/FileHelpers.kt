@@ -48,16 +48,15 @@ object FileHelpers {
     }
 
     fun getI18nFile(project: Project, callback: (file: VirtualFile?) -> Unit) {
-        ApplicationManager.getApplication().invokeLater {
-            runWriteAction {
-                PubRoot.forFile(project.projectFile)?.lib?.let { lib ->
-                    val generated = lib.findChild("generated")
-                        ?: lib.createChildDirectory(this, "generated")
+        ApplicationManager.getApplication().runWriteAction {
+            PubRoot.forFile(project.projectFile)?.lib?.let { lib ->
+                val generated = lib.findChild("generated")
+                    ?: lib.createChildDirectory(this, "generated")
 
-                    callback(generated.findOrCreateChildData(this, "i18n.dart"))
-                }
+                callback(generated.findOrCreateChildData(this, "i18n.dart"))
+            } ?: run {
+                callback(null)
             }
         }
-        callback(null)
     }
 }

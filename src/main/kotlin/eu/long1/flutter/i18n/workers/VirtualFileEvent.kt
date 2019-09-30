@@ -87,13 +87,10 @@ class VirtualFileEvent(private val project: Project) : VirtualFileListener {
         val hasAssets = flutterValues["assets"] != null
         val assets: ArrayList<String> = flutterValues["assets"] as? ArrayList<String> ?: arrayListOf()
 
-
         if (assets.contains(newItem)) return
         println("created")
 
         val yamlFile = PsiManager.getInstance(project).findFile(PubRoot.forFile(event.file)!!.pubspec) as YAMLFile
-
-
 
         runWriteAction {
             if (hasAssets) {
