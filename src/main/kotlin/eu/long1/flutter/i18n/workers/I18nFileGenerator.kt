@@ -348,8 +348,12 @@ class S implements WidgetsLocalizations {
   static bool _shouldReload = false;
 
   static set locale(Locale _newLocale) {
-    _shouldReload = true;
-    S._locale = _newLocale;
+    if (S.delegate
+            ._isSupported(_newLocale, _newLocale.countryCode?.isNotEmpty) &&
+        getLang(S._locale) != getLang(_newLocale)) {
+      _shouldReload = true;
+      S._locale = _newLocale;
+    }
   }
 
   static LocaleChangeCallback onLocaleChanged;
