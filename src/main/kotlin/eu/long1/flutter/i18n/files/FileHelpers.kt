@@ -29,8 +29,10 @@ object FileHelpers {
                         // If activated for Dart, return true
                         if("true" == pluginMap["enable-for-dart"]?.toString()?.toLowerCase()) {
                             return true
-                        } else if(!pubRoot.declaresFlutter()) {
-                            // Only activated for Flutter projects.
+                        }
+
+                        // Only activated for Flutter projects.
+                        if(!pubRoot.declaresFlutter()) {
                             return false
                         }
 
