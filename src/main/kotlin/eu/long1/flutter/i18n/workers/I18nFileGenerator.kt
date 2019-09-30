@@ -2,8 +2,6 @@ package eu.long1.flutter.i18n.workers
 
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -16,16 +14,27 @@ import eu.long1.flutter.i18n.arb.ArbFileType
 import eu.long1.flutter.i18n.files.FileHelpers
 import java.util.regex.Pattern
 
-
 class I18nFileGenerator(private val project: Project) {
 
     private val psiManager = PsiManager.getInstance(project)
     private val documentManager = PsiDocumentManager.getInstance(project)
     private val valuesFolder = FileHelpers.getValuesFolder(project)
 
+    @Suppress("NAME_SHADOWING")
     fun generate() {
+        if (!FileHelpers.shouldActivateFor(project)) {
+            return
+        }
+
         val files = stringFiles()
-        if (files.isEmpty()) files.add(createFileForLang("en"))
+
+        if (files.isEmpty()) {
+            createFileForLang("en")?.let {
+                files.add(it)
+            } ?: run {
+                return
+            }
+        }
 
         val data = HashMap<String, HashMap<String, String>>()
 
@@ -51,15 +60,15 @@ class I18nFileGenerator(private val project: Project) {
 
         val i18nFile = builder.toString()
 
-        val file = FileHelpers.getI18nFile(project)
-        val dartFile = psiManager.findFile(file)!!
-        val document = documentManager.getDocument(dartFile)!!
-
-        if (document.text != i18nFile) {
-            ApplicationManager.getApplication().invokeLater {
-                runWriteAction {
-                    document.setText(i18nFile)
-                    documentManager.commitDocument(document)
+        FileHelpers.getI18nFile(project) { file ->
+            file?.let { file ->
+                psiManager.findFile(file)?.let { dartFile ->
+                    documentManager.getDocument(dartFile)?.let { document ->
+                        if (document.text != i18nFile) {
+                            document.setText(i18nFile)
+                            documentManager.commitDocument(document)
+                        }
+                    }
                 }
             }
         }
@@ -266,13 +275,19 @@ class I18nFileGenerator(private val project: Project) {
     /**
      * Create a file in the values folder for the given language.
      */
-    private fun createFileForLang(lang: String): VirtualFile {
-        val virtualFile = valuesFolder.findOrCreateChildData(this, "strings_$lang.arb")
-        val psiFile = psiManager.findFile(virtualFile)!! as JsonFile
-        val doc = documentManager.getDocument(psiFile)!!
-        doc.setText("{}")
-        CodeStyleManager.getInstance(psiManager).reformat(psiFile)
-        return virtualFile
+    @Suppress("SameParameterValue")
+    private fun createFileForLang(lang: String): VirtualFile? {
+        try {
+            val virtualFile = valuesFolder.findOrCreateChildData(this, "strings_$lang.arb")
+            (psiManager.findFile(virtualFile) as? JsonFile)?.let { psiFile ->
+                val doc = documentManager.getDocument(psiFile)!!
+                doc.setText("{}")
+                CodeStyleManager.getInstance(psiManager).reformat(psiFile)
+                return virtualFile
+            }
+        } catch (ignored: Throwable) {
+        }
+        return null
     }
 
     /**
@@ -302,7 +317,7 @@ class I18nFileGenerator(private val project: Project) {
             isPlural
         } as ArrayList
 
-        HashMap(map).forEach { id, counts ->
+        HashMap(map).forEach { (id, counts) ->
             if (counts.none { it.contains("other", true) }) {
                 counts.forEach { count -> pluralIds.remove("$id$count") }
                 map.remove(id)
