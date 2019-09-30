@@ -61,31 +61,30 @@ class NewArbFileAction : AnAction() {
             val resFolder = baseDir.findChild("res") ?: baseDir.createChildDirectory(this, "res")
             val valuesFolder = resFolder.findChild("values") ?: resFolder.createChildDirectory(this, "values")
             val fileName = "strings_$suffix.arb"
-            var newVF = valuesFolder.findChild(fileName)
-
             val editor = FileEditorManager.getInstance(project)
-            if (newVF == null) {
+
+            valuesFolder.findChild(fileName)?.let { newVF ->
+                editor.openFile(newVF, true)
+            } ?: run {
                 runWriteAction {
-                    newVF = valuesFolder.findOrCreateChildData(this, fileName)
-                    val document = PsiDocumentManager.getInstance(project).getDocument(
-                        PsiManager.getInstance(project).findFile(newVF!!)!!
-                    )!!
+                    val newVF = valuesFolder.findOrCreateChildData(this, fileName)
+                    PsiManager.getInstance(project).findFile(newVF)?.let { psiFile ->
+                        PsiDocumentManager.getInstance(project).getDocument(psiFile)?.let { document ->
+                            CommandProcessor.getInstance().executeCommand(project, {
+                                document.setText("{}")
+                            }, "Create new string file", "Create new string file")
 
-                    CommandProcessor.getInstance().executeCommand(project, {
-                        document.setText("{}")
-                    }, "Create new string file", "Create new string file")
-
-                    PsiDocumentManager.getInstance(project).commitDocument(document)
-                    document.addDocumentListener(object : DocumentListener {
-                        override fun documentChanged(event: DocumentEvent) {
-                            ApplicationManager.getApplication().invokeLater(
-                                Runnable { I18nFileGenerator(project).generate() }, project.disposed
-                            )
+                            PsiDocumentManager.getInstance(project).commitDocument(document)
+                            document.addDocumentListener(object : DocumentListener {
+                                override fun documentChanged(event: DocumentEvent) {
+                                    ApplicationManager.getApplication().invokeLater(
+                                        Runnable { I18nFileGenerator(project).generate() }, project.disposed
+                                    )
+                                }
+                            })
                         }
-                    })
+                    }
                 }
-            } else {
-                editor.openFile(newVF!!, true)
             }
         }
     }

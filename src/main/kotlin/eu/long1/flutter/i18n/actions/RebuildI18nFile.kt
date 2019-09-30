@@ -10,13 +10,19 @@ import io.flutter.utils.FlutterModuleUtils
 class RebuildI18nFile : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        WriteCommandAction.runWriteCommandAction(e.project) { I18nFileGenerator(e.project!!).generate() }
+        e.project?.let { project ->
+            WriteCommandAction.runWriteCommandAction(project) {
+                I18nFileGenerator(project).generate()
+            }
+        }
     }
 
     override fun update(e: AnActionEvent) {
-        if (e.project != null && !FlutterModuleUtils.hasFlutterModule(e.project!!)) {
-            e.presentation.isEnabled = false
-            return
+        e.project?.let { project ->
+            if (!FlutterModuleUtils.hasFlutterModule(project)) {
+                e.presentation.isEnabled = false
+                return
+            }
         }
 
         e.presentation.icon = FlutterI18nIcons.ArbRefreshAction

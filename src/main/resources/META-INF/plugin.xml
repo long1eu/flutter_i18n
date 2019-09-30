@@ -116,7 +116,7 @@
         <action id="FlutterI18n.NewArbFile"
                 class="eu.long1.flutter.i18n.actions.NewArbFileAction"
                 text="Arb File"
-                description="Creates a Arb file for a new language">
+                description="Creates an Arb file for a new language">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="Dart.NewDartFile"/>
         </action>
     </actions>

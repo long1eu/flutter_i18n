@@ -3,7 +3,9 @@ package eu.long1.flutter.i18n.workers
 import com.intellij.json.psi.JsonElementGenerator
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -55,7 +57,7 @@ class Initializer : StartupActivity, DocumentListener {
 
     override fun documentChanged(event: DocumentEvent) {
         documentManager.commitDocument(event.document)
-        val changedFile = documentManager.getPsiFile(event.document)!! as? JsonFile ?: return
+        val changedFile = documentManager.getPsiFile(event.document) as? JsonFile ?: return
         val undoManager = UndoManager.getInstance(changedFile.project)
         if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) return
 
@@ -63,25 +65,31 @@ class Initializer : StartupActivity, DocumentListener {
             val lang = changedFile.virtualFile.nameWithoutExtension.substringAfter("_")
             val project = changedFile.project
 
-            val dartFile = FileHelpers.getI18nFile(project)
-            val dartPsi = psiManager.findFile(dartFile)!!
+            FileHelpers.getI18nFile(project) { dartFile ->
+                dartFile?.let { dartFile ->
+                    psiManager.findFile(dartFile)?.let { dartPsi ->
+                        PsiTreeUtil.findChildrenOfType(dartPsi, DartClass::class.java).firstOrNull {
+                            it.name == lang
+                        }?.let { replaceClass ->
+                            val methodItem = getMethodItem(event, changedFile, event.offset, replaceClass)
+                            methodItem.dartMethod?.delete()
+                            methodItem.method.isNullOrBlank().let {
+                                DartElementGenerator.createDummyFile(project, "class Dummy {\n${methodItem.method}}")?.let { dummyFile ->
+                                    val methods = PsiTreeUtil.findChildrenOfAnyType(
+                                        dummyFile,
+                                        DartMethodDeclaration::class.java,
+                                        DartGetterDeclaration::class.java
+                                    )
 
-            val replaceClass =
-                PsiTreeUtil.findChildrenOfType(dartPsi, DartClass::class.java).firstOrNull { it.name == lang }
-                    ?: return
-            val methodItem = getMethodItem(event, changedFile, event.offset, replaceClass)
-            methodItem.dartMethod?.delete()
-
-            if (methodItem.method.isNullOrBlank()) return
-
-            val dummyFile = DartElementGenerator.createDummyFile(project, "class Dummy {\n${methodItem.method}}")!!
-            val methods = PsiTreeUtil.findChildrenOfAnyType(
-                dummyFile,
-                DartMethodDeclaration::class.java,
-                DartGetterDeclaration::class.java
-            )
-
-            methods.forEach { replaceClass.methods.last().parent.add(it) }
+                                    methods.forEach {
+                                        replaceClass.methods.last().parent.add(it)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
