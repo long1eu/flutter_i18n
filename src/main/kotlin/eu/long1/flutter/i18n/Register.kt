@@ -24,6 +24,7 @@ class Register(private val project: Project) : ProjectComponent {
         }
 
         val am = ActionManager.getInstance()
+
         if (am.getAction(REBUILD_FILE_ACTION_ID) != null) {
             return
         }
@@ -42,7 +43,9 @@ class Register(private val project: Project) : ProjectComponent {
     }
 
     override fun projectClosed() {
-        ActionManager.getInstance().getAction(REBUILD_FILE_ACTION_ID)?.templatePresentation?.isEnabled = false
+        val am = ActionManager.getInstance()
+        am.getAction(NEW_FILE_ACTION_ID)?.templatePresentation?.isEnabled = false
+        am.getAction(REBUILD_FILE_ACTION_ID)?.templatePresentation?.isEnabled = false
     }
 
     companion object {
