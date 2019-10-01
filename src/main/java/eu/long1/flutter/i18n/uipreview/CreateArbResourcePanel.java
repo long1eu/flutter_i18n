@@ -42,7 +42,9 @@ public class CreateArbResourcePanel {
 
     public CreateArbResourcePanel(@NotNull Module module, String resId, String resValue) {
         this.module = module;
-        this.valuesDir = FileHelpers.getValuesFolder(module.getProject());
+        this.valuesDir = FileHelpers.shouldActivateFor(module.getProject())
+            ? FileHelpers.getValuesFolder(module.getProject())
+            : null;
 
         setChangeNameVisible(false);
         setChangeValueVisible(false);
@@ -87,12 +89,15 @@ public class CreateArbResourcePanel {
 
     private void doDeleteStringFile() {
         final int selectedIndex = stringsFiles.getSelectedIndex();
-        if (selectedIndex < 0) return;
+        if (selectedIndex < 0) {
+            return;
+        }
 
         final String selectedName = stringsFilesNames[selectedIndex];
-        final VirtualFile selectedLang = valuesDir.findChild(selectedName);
-        if (selectedLang == null) return;
-
+        final VirtualFile selectedLang = valuesDir == null ? null : valuesDir.findChild(selectedName);
+        if (selectedLang == null) {
+            return;
+        }
 
         final VirtualFileDeleteProvider provider = new VirtualFileDeleteProvider();
         provider.deleteElement(dataId -> {
@@ -121,18 +126,24 @@ public class CreateArbResourcePanel {
     }
 
     private void doAddNewStringsFile() {
-        if (module == null) return;
+        if (module == null) {
+            return;
+        }
 
         final Project project = module.getProject();
+        if (!FileHelpers.shouldActivateFor(project)) {
+            return;
+        }
 
-        DeviceConfiguratorPanel panel = new DeviceConfiguratorPanel();
-        DialogWrapper dialog = new DialogWrapper(project, panel);
+        final DeviceConfiguratorPanel panel = new DeviceConfiguratorPanel();
+        final DialogWrapper dialog = new DialogWrapper(project, panel);
         dialog.setTitle("Choose Language");
         dialog.showAndGet();
 
         if (dialog.isOK()) {
-            Locale locale = panel.getEditor().apply();
-            String suffix = locale.getLanguage() + (StringUtil.isNotEmpty(locale.getCountry()) ? "_" + locale.getCountry() : "");
+            final Locale locale = panel.getEditor().apply();
+            final String suffix = locale.getLanguage() +
+                (StringUtil.isNotEmpty(locale.getCountry()) ? "_" + locale.getCountry() : "");
             NewArbFileAction.Companion.createFile(suffix, project);
             updateStringFiles();
         }
@@ -140,7 +151,11 @@ public class CreateArbResourcePanel {
 
     @SuppressWarnings("unchecked")
     private void updateStringFiles() {
-        VirtualFile[] stringFiles = valuesDir.getChildren();
+        if (valuesDir == null) {
+            return;
+        }
+
+        final VirtualFile[] stringFiles = valuesDir.getChildren();
 
         final Map<String, JCheckBox> oldCheckBoxes = checkBoxMap;
         final int selectedIndex = stringsFiles.getSelectedIndex();

@@ -8,7 +8,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import eu.long1.flutter.i18n.files.FileHelpers
@@ -45,16 +44,16 @@ class DialogWrapper(project: Project?, private val panel: JComponent) : com.inte
                     WriteCommandAction.runWriteCommandAction(
                         project
                     ) {
-                        panel.selected.forEach { it ->
-                            val langFile = psiManager.findFile(valuesDir.findChild(it)!!)
-                            var json = PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java)
-                            if (json == null) {
-                                json = JsonElementGenerator(project).createObject("")
-                                langFile?.add(json as PsiElement);
-                                json = PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java)
+                        panel.selected.forEach {
+                            val file = valuesDir.findChild(it) ?: return@forEach
+                            val langFile = psiManager.findFile(file) ?: return@forEach
+                            PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java) ?: run {
+                                langFile.add(JsonElementGenerator(project).createObject("{}"))
+                                PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java)
+                            }?.let { json ->
+                                if (json.findProperty(panel.resId) == null)
+                                    JsonPsiUtil.addProperty(json, property.copy() as JsonProperty, false)
                             }
-                            if (json!!.findProperty(panel.resId) == null)
-                                JsonPsiUtil.addProperty(json, property.copy() as JsonProperty, false)
                         }
 
                         onFinish(panel.resId)

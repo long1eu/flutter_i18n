@@ -3,14 +3,13 @@ package eu.long1.flutter.i18n.workers
 import com.intellij.json.psi.JsonElementGenerator
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
@@ -21,33 +20,25 @@ import com.jetbrains.lang.dart.util.DartElementGenerator
 import eu.long1.flutter.i18n.Log
 import eu.long1.flutter.i18n.files.FileHelpers
 import eu.long1.flutter.i18n.items.MethodItem
-import io.flutter.utils.FlutterModuleUtils
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.concurrent.scheduleAtFixedRate
 
 class Initializer : StartupActivity, DocumentListener {
 
-    private lateinit var psiManager: PsiManager
     private lateinit var documentManager: PsiDocumentManager
-    private lateinit var valuesFolder: VirtualFile
 
     override fun runActivity(project: Project) {
-        if (!FlutterModuleUtils.hasFlutterModule(project)) {
-            log.i("This is not a Flutter project.")
-            return
-        }
-
-        psiManager = PsiManager.getInstance(project)
         documentManager = PsiDocumentManager.getInstance(project)
 
-        WriteCommandAction.runWriteCommandAction(project) {
-            valuesFolder = FileHelpers.getValuesFolder(project)
-        }
-
         Timer().scheduleAtFixedRate(0, 1000) {
-            runReadAction {
-                I18nFileGenerator(project).generate()
+            if (!FileHelpers.shouldActivateFor(project)) {
+                return@scheduleAtFixedRate
+            }
+            ApplicationManager.getApplication().invokeLater {
+                runWriteAction {
+                    I18nFileGenerator(project).generate()
+                }
             }
         }
     }
@@ -63,8 +54,9 @@ class Initializer : StartupActivity, DocumentListener {
             val project = changedFile.project
 
             FileHelpers.getI18nFile(project) { dartFile ->
+                @Suppress("NAME_SHADOWING")
                 dartFile?.let { dartFile ->
-                    psiManager.findFile(dartFile)?.let { dartPsi ->
+                    PsiManager.getInstance(project).findFile(dartFile)?.let { dartPsi ->
                         PsiTreeUtil.findChildrenOfType(dartPsi, DartClass::class.java).firstOrNull {
                             it.name == lang
                         }?.let { replaceClass ->
@@ -134,7 +126,11 @@ class Initializer : StartupActivity, DocumentListener {
                             counts.add(PLURAL_MATCHER.group(2))
 
                             val map = hashMapOf(id to value)
-                            map[method.name!!] = method.stringLiteralExpression!!.text.drop(1).dropLast(1)
+                            method.name?.let { methodName2 ->
+                                method.stringLiteralExpression?.let { literalExpression ->
+                                    map[methodName2] = literalExpression.text.drop(1).dropLast(1)
+                                }
+                            }
 
                             generator.appendPluralMethod(id, counts, map, builder, shouldOverride(clazz))
                         } else generator.appendStringMethod(id, value, builder, shouldOverride(clazz))
@@ -143,32 +139,36 @@ class Initializer : StartupActivity, DocumentListener {
                         val countsList = arrayListOf(count)
                         val valuesMap = hashMapOf(id to value)
 
-                        val dartSwitch = PsiTreeUtil.findChildOfType(method, DartSwitchStatement::class.java)!!
+                        PsiTreeUtil.findChildOfType(method, DartSwitchStatement::class.java)?.let { dartSwitch ->
+                            dartSwitch.switchCaseList.forEach { dartSwitchCase ->
+                                PsiTreeUtil.findChildOfType(
+                                    dartSwitchCase.statements,
+                                    DartStringLiteralExpression::class.java
+                                )?.let { expression ->
+                                    val caseValue = getStringFromExpression(expression)
+                                    val thisExpression = dartSwitchCase.expression ?: return@forEach
+                                    val caseCount = generator.getCountFromValue(getStringFromExpression(thisExpression))
 
-                        dartSwitch.switchCaseList.forEach {
-                            val expression =
-                                PsiTreeUtil.findChildOfType(it.statements, DartStringLiteralExpression::class.java)!!
-                            val caseValue = getStringFromExpression(expression)
-                            val caseCount = generator.getCountFromValue(getStringFromExpression(it.expression!!))
-
-                            if (count != caseCount) {
-                                countsList.add(caseCount)
-                                valuesMap["$methodName$caseCount"] = caseValue
+                                    if (count != caseCount) {
+                                        countsList.add(caseCount)
+                                        valuesMap["$methodName$caseCount"] = caseValue
+                                    }
+                                }
                             }
+
+                            val dartSwitchCase = dartSwitch.defaultCase ?: return@let
+                            val defaultExpression = PsiTreeUtil.findChildOfType(
+                                dartSwitchCase.statements,
+                                DartStringLiteralExpression::class.java
+                            ) ?: return@let
+
+                            if (!count.equals("other", true)) {
+                                countsList.add("other")
+                                valuesMap["${methodName}other"] = getStringFromExpression(defaultExpression)
+                            }
+
+                            generator.appendPluralMethod(methodName, countsList, valuesMap, builder, shouldOverride(clazz))
                         }
-
-                        val defaultExpression = PsiTreeUtil.findChildOfType(
-                            dartSwitch.defaultCase!!.statements,
-                            DartStringLiteralExpression::class.java
-                        )!!
-                        val defaultValue = getStringFromExpression(defaultExpression)
-
-                        if (!count.equals("other", true)) {
-                            countsList.add("other")
-                            valuesMap["${methodName}other"] = defaultValue
-                        }
-
-                        generator.appendPluralMethod(methodName, countsList, valuesMap, builder, shouldOverride(clazz))
                     }
                 }
             }
@@ -210,58 +210,59 @@ class Initializer : StartupActivity, DocumentListener {
                     is DartGetterDeclaration -> method = clazz.findMethodByName(id)
                     is DartMethodDeclaration -> {
                         if (count.equals("other", true)) {
-                            val dartSwitch = PsiTreeUtil.findChildOfType(method, DartSwitchStatement::class.java)!!
+                            PsiTreeUtil.findChildOfType(method, DartSwitchStatement::class.java)?.let { dartSwitch ->
+                                dartSwitch.switchCaseList.forEach {
+                                    val expression = PsiTreeUtil.findChildOfType(
+                                        it.statements,
+                                        DartStringLiteralExpression::class.java
+                                    ) ?: return@forEach
+                                    val thisExpression = it.expression ?: return@forEach
+                                    val caseCount = generator.getCountFromValue(getStringFromExpression(thisExpression)) ?: return@forEach
 
-                            dartSwitch.switchCaseList.forEach {
-                                val expression = PsiTreeUtil.findChildOfType(
-                                    it.statements,
-                                    DartStringLiteralExpression::class.java
-                                )!!
-                                val caseValue = getStringFromExpression(expression)
-                                val caseCount = generator.getCountFromValue(getStringFromExpression(it.expression!!))!!
-
-                                generator.appendStringMethod(
-                                    "$methodName$caseCount",
-                                    caseValue,
-                                    builder,
-                                    shouldOverride(clazz)
-                                )
+                                    generator.appendStringMethod(
+                                        "$methodName$caseCount",
+                                        getStringFromExpression(expression),
+                                        builder,
+                                        shouldOverride(clazz)
+                                    )
+                                }
                             }
                         } else {
                             val countsList = arrayListOf<String>()
                             val valuesMap = hashMapOf<String, String>()
 
-                            val dartSwitch = PsiTreeUtil.findChildOfType(method, DartSwitchStatement::class.java)!!
+                            PsiTreeUtil.findChildOfType(method, DartSwitchStatement::class.java)?.let { dartSwitch ->
+                                dartSwitch.switchCaseList.forEach { dartSwitchCase ->
+                                    val expression = PsiTreeUtil.findChildOfType(
+                                        dartSwitchCase.statements,
+                                        DartStringLiteralExpression::class.java
+                                    ) ?: return@forEach
+                                    val thisExpression = dartSwitchCase.expression ?: return@forEach
+                                    val caseCount = generator.getCountFromValue(getStringFromExpression(thisExpression)) ?: return@forEach
 
-                            dartSwitch.switchCaseList.forEach {
-                                val expression = PsiTreeUtil.findChildOfType(
-                                    it.statements,
-                                    DartStringLiteralExpression::class.java
-                                )!!
-                                val caseValue = getStringFromExpression(expression)
-                                val caseCount = generator.getCountFromValue(getStringFromExpression(it.expression!!))!!
-
-                                if ("$methodName$caseCount" != id) {
-                                    countsList.add(caseCount)
-                                    valuesMap["$methodName$caseCount"] = caseValue
+                                    if ("$methodName$caseCount" != id) {
+                                        countsList.add(caseCount)
+                                        valuesMap["$methodName$caseCount"] = getStringFromExpression(expression)
+                                    }
                                 }
+
+                                val dartSwitchCase = dartSwitch.defaultCase ?: return@let
+                                val defaultExpression = PsiTreeUtil.findChildOfType(
+                                    dartSwitchCase.statements,
+                                    DartStringLiteralExpression::class.java
+                                ) ?: return@let
+                                val defaultValue = getStringFromExpression(defaultExpression)
+                                countsList.add("other")
+                                valuesMap["${methodName}other"] = defaultValue
+
+                                generator.appendPluralMethod(
+                                    methodName,
+                                    countsList,
+                                    valuesMap,
+                                    builder,
+                                    shouldOverride(clazz)
+                                )
                             }
-
-                            val defaultExpression = PsiTreeUtil.findChildOfType(
-                                dartSwitch.defaultCase!!.statements,
-                                DartStringLiteralExpression::class.java
-                            )!!
-                            val defaultValue = getStringFromExpression(defaultExpression)
-                            countsList.add("other")
-                            valuesMap["${methodName}other"] = defaultValue
-
-                            generator.appendPluralMethod(
-                                methodName,
-                                countsList,
-                                valuesMap,
-                                builder,
-                                shouldOverride(clazz)
-                            )
                         }
                     }
                 }
