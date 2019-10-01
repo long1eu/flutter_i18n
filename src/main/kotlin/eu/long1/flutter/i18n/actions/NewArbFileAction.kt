@@ -80,12 +80,22 @@ class NewArbFileAction : AnAction() {
             }
 
             PsiManager.getInstance(project).findFile(newVF)?.let { psiFile ->
-                PsiDocumentManager.getInstance(project).getDocument(psiFile)?.let { document ->
-                    CommandProcessor.getInstance().executeCommand(project, {
-                        document.setText("{}")
-                    }, "Create new string file", "Create new string file")
+                val documentManager = PsiDocumentManager.getInstance(project)
 
-                    PsiDocumentManager.getInstance(project).commitDocument(document)
+                documentManager.getDocument(psiFile)?.let { document ->
+                    runWriteAction {
+                        CommandProcessor.getInstance().executeCommand(
+                            project,
+                            {
+                                document.setText("{}")
+                            },
+                            "Create new string file",
+                            "Create new string file"
+                        )
+                    }
+
+                    documentManager.commitDocument(document)
+
                     document.addDocumentListener(object : DocumentListener {
                         override fun documentChanged(event: DocumentEvent) {
                             ApplicationManager.getApplication().invokeLater(
