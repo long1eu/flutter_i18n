@@ -10,10 +10,10 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression
+import eu.long1.flutter.i18n.files.FileHelpers
 import eu.long1.flutter.i18n.files.Syntax
 import eu.long1.flutter.i18n.uipreview.DialogWrapper.Companion.showAndCreateFile
 import eu.long1.flutter.i18n.workers.Initializer
-import io.flutter.utils.FlutterModuleUtils
 
 class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityAction {
 
@@ -22,19 +22,19 @@ class ExtractStringResourceDart : PsiElementBaseIntentionAction(), HighPriorityA
     override fun getFamilyName(): String = text
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        if (editor == null) return false
-        val isFlutter = FlutterModuleUtils.isInFlutterModule(element)
-        val dartExpression = PsiTreeUtil.getParentOfType(element, DartStringLiteralExpression::class.java)
-
-        return isFlutter && dartExpression != null
+        return editor?.let {
+            PsiTreeUtil.getParentOfType(element, DartStringLiteralExpression::class.java) != null
+        } ?: false
     }
 
-
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        val docManager = PsiDocumentManager.getInstance(project)
-        val psiFile = docManager.getPsiFile(editor.document)!!
-        val module = ModuleUtilCore.findModuleForFile(psiFile.virtualFile, project)!!
-        val dartExpression = PsiTreeUtil.getParentOfType(element, DartStringLiteralExpression::class.java)!!
+        if(!FileHelpers.shouldActivateFor(project)) {
+            return
+        }
+
+        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return
+        val module = ModuleUtilCore.findModuleForFile(psiFile.virtualFile, project) ?: return
+        val dartExpression = PsiTreeUtil.getParentOfType(element, DartStringLiteralExpression::class.java) ?: return
 
         val resId = dartExpression.text
             ?.replace(Regex("[^A-Za-z0-9\\s]"), "")

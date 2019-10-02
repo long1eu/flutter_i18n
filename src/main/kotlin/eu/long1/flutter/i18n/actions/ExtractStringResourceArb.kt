@@ -11,6 +11,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import eu.long1.flutter.i18n.arb.ArbFileType
+import eu.long1.flutter.i18n.files.FileHelpers
 import eu.long1.flutter.i18n.files.Syntax
 import eu.long1.flutter.i18n.uipreview.DialogWrapper
 import eu.long1.flutter.i18n.workers.Initializer
@@ -22,30 +23,35 @@ class ExtractStringResourceArb : PsiElementBaseIntentionAction(), HighPriorityAc
     override fun getFamilyName(): String = text
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor?.document!!)
-        val parent = PsiTreeUtil.getParentOfType(element, JsonProperty::class.java)
+        return editor?.let {
+            val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(it.document)
+            val parent = PsiTreeUtil.getParentOfType(element, JsonProperty::class.java)
 
-        return psiFile?.fileType == ArbFileType && parent != null
+            psiFile?.fileType == ArbFileType && parent != null
+        } ?: false
     }
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
-        val documentManager = PsiDocumentManager.getInstance(project)
-        val psiFile = documentManager.getPsiFile(editor!!.document)!!
-        val file = psiFile.virtualFile
-        val module = ModuleUtilCore.findModuleForFile(file, project)!!
-        val parent = PsiTreeUtil.getParentOfType(element, JsonProperty::class.java) ?: return
+        if(!FileHelpers.shouldActivateFor(project)) {
+            return
+        }
+        editor?.let {
+            val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(it.document) ?: return
+            val module = ModuleUtilCore.findModuleForFile(psiFile.virtualFile, project) ?: return
+            val parent = PsiTreeUtil.getParentOfType(element, JsonProperty::class.java) ?: return
 
-        WriteCommandAction.runWriteCommandAction(
-            project, text, Syntax.GROUP_ID,
-            Runnable {
-                DialogWrapper.showAndCreateFile(
-                    project,
-                    module,
-                    parent.name,
-                    Initializer.getStringFromExpression(parent.value),
-                    text
-                )
-            }, psiFile
-        )
+            WriteCommandAction.runWriteCommandAction(
+                project, text, Syntax.GROUP_ID,
+                Runnable {
+                    DialogWrapper.showAndCreateFile(
+                        project,
+                        module,
+                        parent.name,
+                        Initializer.getStringFromExpression(parent.value),
+                        text
+                    )
+                }, psiFile
+            )
+        }
     }
 }

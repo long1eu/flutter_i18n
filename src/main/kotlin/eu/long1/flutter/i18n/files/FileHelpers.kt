@@ -6,18 +6,19 @@ import io.flutter.pub.PubRoot
 import org.yaml.snakeyaml.Yaml
 import java.io.FileInputStream
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runWriteAction
 
 object FileHelpers {
     @JvmStatic
-    fun getResourceFolder(project: Project): VirtualFile =
-        project.baseDir.findChild("res")
+    fun getResourceFolder(project: Project): VirtualFile {
+        return project.baseDir.findChild("res")
             ?: project.baseDir.createChildDirectory(this, "res")
+    }
 
     @JvmStatic
     fun getValuesFolder(project: Project): VirtualFile {
-        return getResourceFolder(project).findChild("values")
-            ?: getResourceFolder(project).createChildDirectory(this, "values")
+        val resFolder = getResourceFolder(project)
+        return resFolder.findChild("values")
+            ?: resFolder.createChildDirectory(this, "values")
     }
 
     @JvmStatic
@@ -26,18 +27,16 @@ object FileHelpers {
             FileInputStream(pubRoot.pubspec.path).use { inputStream ->
                 (Yaml().load(inputStream) as? Map<String, Any>)?.let { map ->
                     (map["flutter_i18n"] as? Map<*, *>)?.let { pluginMap ->
-                        // If activated for Dart, return true
-                        if("true" == pluginMap["enable-for-dart"]?.toString()?.toLowerCase()) {
-                            return true
+                        // Did the user deactivate for this project?
+                        if (isOptionFalse(pluginMap, "enable-flutter-i18n")) {
+                            return@shouldActivateFor false;
                         }
 
-                        // Only activated for Flutter projects.
-                        if(!pubRoot.declaresFlutter()) {
-                            return false
-                        }
-
-                        // Disabled for this Flutter project?
-                        return "false" != pluginMap["enable-flutter-i18n"]?.toString()?.toLowerCase()
+                        // Automatically activated for Flutter projects.
+                        return@shouldActivateFor if (pubRoot.declaresFlutter())
+                            true
+                        else
+                            isOptionTrue(pluginMap, "enable-for-dart")
                     }
                 }
             }
@@ -56,7 +55,19 @@ object FileHelpers {
                 callback(generated.findOrCreateChildData(this, "i18n.dart"))
             } ?: run {
                 callback(null)
-            }
+           }
         }
+    }
+
+    @Suppress("SameParameterValue")
+    private fun isOptionTrue(map: Map<*, *>, name: String): Boolean {
+        val value = map[name]?.toString()?.toLowerCase()
+        return "true" == value
+    }
+
+    @Suppress("SameParameterValue")
+    private fun isOptionFalse(map: Map<*, *>, name: String): Boolean {
+        val value = map[name]?.toString()?.toLowerCase()
+        return "false" == value
     }
 }
