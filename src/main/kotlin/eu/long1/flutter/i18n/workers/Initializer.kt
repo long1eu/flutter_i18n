@@ -32,12 +32,11 @@ class Initializer : StartupActivity, DocumentListener {
         documentManager = PsiDocumentManager.getInstance(project)
 
         Timer().scheduleAtFixedRate(0, 1000) {
-            if (!FileHelpers.shouldActivateFor(project)) {
-                return@scheduleAtFixedRate
-            }
-            ApplicationManager.getApplication().invokeLater {
-                runWriteAction {
-                    I18nFileGenerator(project).generate()
+            if (FileHelpers.shouldActivateFor(project)) {
+                ApplicationManager.getApplication().invokeLater {
+                    runWriteAction {
+                        I18nFileGenerator(project).generate()
+                    }
                 }
             }
         }
