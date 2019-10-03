@@ -6,7 +6,7 @@ import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
 import eu.long1.flutter.i18n.actions.NewArbFileAction
 import eu.long1.flutter.i18n.actions.RebuildI18nFile
-import io.flutter.utils.FlutterModuleUtils
+import eu.long1.flutter.i18n.files.FileHelpers
 
 class Register(private val project: Project) : ProjectComponent {
 
@@ -19,27 +19,29 @@ class Register(private val project: Project) : ProjectComponent {
     }
 
     override fun projectOpened() {
-        if (!FlutterModuleUtils.hasFlutterModule(project)) {
-            return
+        FileHelpers.getPubSpecConfig(project)?.let { pubSpecConfig ->
+            if (!pubSpecConfig.isFlutterModule) {
+                return
+            }
+
+            val am = ActionManager.getInstance()
+            if (am.getAction(REBUILD_FILE_ACTION_ID) != null) {
+                return
+            }
+
+            val newFileAction = NewArbFileAction()
+            am.registerAction(NEW_FILE_ACTION_ID, newFileAction)
+
+            val rebuildFileAction = RebuildI18nFile()
+            am.registerAction(REBUILD_FILE_ACTION_ID, rebuildFileAction)
+
+            (am.getAction("ToolbarRunGroup") as? DefaultActionGroup)?.let { windowM ->
+                windowM.addSeparator()
+                windowM.add(newFileAction)
+                windowM.add(rebuildFileAction)
+                windowM.addSeparator()
+            }
         }
-
-        val am = ActionManager.getInstance()
-
-        if (am.getAction(REBUILD_FILE_ACTION_ID) != null) {
-            return
-        }
-
-        val newFileAction = NewArbFileAction()
-        am.registerAction(NEW_FILE_ACTION_ID, newFileAction)
-
-        val rebuildFileAction = RebuildI18nFile()
-        am.registerAction(REBUILD_FILE_ACTION_ID, rebuildFileAction)
-
-        val windowM = am.getAction("ToolbarRunGroup") as DefaultActionGroup
-        windowM.addSeparator()
-        windowM.add(newFileAction)
-        windowM.add(rebuildFileAction)
-        windowM.addSeparator()
     }
 
     override fun projectClosed() {
