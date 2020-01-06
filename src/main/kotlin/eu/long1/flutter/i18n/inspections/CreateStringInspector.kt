@@ -1,9 +1,9 @@
 package eu.long1.flutter.i18n.inspections
 
 import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ex.BaseLocalInspectionTool
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartFileType
@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.DartReferenceExpression
 import eu.long1.flutter.i18n.inspections.quickfix.CreateStringResourceQuickFix
 
-class CreateStringInspector : BaseLocalInspectionTool() {
+class CreateStringInspector : LocalInspectionTool() {
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (file.fileType == DartFileType.INSTANCE) {
             val analysisService = DartAnalysisServerService.getInstance(file.project).getErrors(file.virtualFile)

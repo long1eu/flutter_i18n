@@ -1,15 +1,15 @@
 package eu.long1.flutter.i18n.inspections
 
 import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ex.BaseLocalInspectionTool
 import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiFile
 import eu.long1.flutter.i18n.arb.ArbFileType
 
-class JsonKeysInspector : BaseLocalInspectionTool() {
+class JsonKeysInspector : LocalInspectionTool() {
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (!isOnTheFly) return null
