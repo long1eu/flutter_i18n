@@ -1,15 +1,8 @@
-# Maintenance
+# PROJECT MAINTENANCE PAUSED
 
-I'm refactoring the plugin so we can add VSCode support. Also I've scheduled maintenance windows, a day a month which I will dedicate for responding to pull-requests and issues. It will be the last friday of each month as following:
- - June 28
- - July 26
- - August 30
- - September 27
- - October 25
- - November 29
- - December 27
- 
- Two days after this date a new version will be released. So make sure to add your issues as soon as possible, so they can make it to the next release. 
+This project is no longer maintained due to the lack of time and availability. I'm a developer to and I know how frustrating can be when a tool I use no is no longer available or doesn't work any more. I'm sorry for the pain I've caused. :( Still in this repo the is a CLI tool that can work without the help of the IDE, and uses pure Dart to generate files in the same format. https://github.com/long1eu/flutter_i18n/tree/master/flutter_l10n Please give it a try, maybe it can ease your pain. 
+
+As of today I requested Intellij to remove the plugin from the market. Thanks for all the support. 
 
 # Synopsis
 
