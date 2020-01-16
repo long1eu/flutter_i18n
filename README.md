@@ -19,7 +19,7 @@ Setup your localizationsDelegates and your supportedLocales which allows the acc
   Widget build(BuildContext context) {
     return new MaterialApp(
       onGenerateTitle: (BuildContext context) => S.of(context).app_name,
-      <b>localizationsDelegates: const &lt;LocalizationsDelegate&lt;WidgetsLocalizations&gt;&gt;[
+      <b>localizationsDelegates: [
             S.delegate,
             // You need to add them if you are using the material library.
             // The material components usses this delegates to provide default 
