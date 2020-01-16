@@ -47,10 +47,10 @@ class DialogWrapper(project: Project?, private val panel: JComponent) : com.inte
                         panel.selected.forEach {
                             val file = valuesDir.findChild(it) ?: return@forEach
                             val langFile = psiManager.findFile(file) ?: return@forEach
-                            PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java) ?: run {
+                            (PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java) ?: run {
                                 langFile.add(JsonElementGenerator(project).createObject("{}"))
                                 PsiTreeUtil.getChildOfType(langFile, JsonObject::class.java)
-                            }?.let { json ->
+                            })?.let { json ->
                                 if (json.findProperty(panel.resId) == null)
                                     JsonPsiUtil.addProperty(json, property.copy() as JsonProperty, false)
                             }
